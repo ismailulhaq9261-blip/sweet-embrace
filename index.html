@@ -8,6 +8,17 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#C9A961">
 <title>Sweet Embrace Daily 💕</title>
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  OneSignalDeferred.push(async function(OneSignal) {
+    await OneSignal.init({
+      appId: "21e9c5b7-faf1-4e8e-870c-3b1149948bb0",
+      notifyButton: { enable: false },
+      allowLocalhostAsSecureOrigin: true,
+    });
+  });
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Jost:wght@300;400;500&family=Dancing+Script:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -2400,11 +2411,31 @@ function showMissMe() {
 }
 
 // ===== THINKING OF YOU =====
+const OS_APP_ID = "21e9c5b7-faf1-4e8e-870c-3b1149948bb0";
+const OS_API_KEY = "os_v2_app_ehu4ln726fhi5bymhmiutfelwbsmpicepekukoeblwkkfrpiax5h5jk4qz2vuwltgunyeucwd5zk7afjhzvulqiwj7o33lyg5of3bla";
+
 async function sendTOY() {
   await sb.from('signals').insert({ type: 'thinking_of_you', seen: false });
   document.getElementById('toySent').style.display = 'block';
   setTimeout(() => document.getElementById('toySent').style.display='none', 3000);
   showToast('💕 Sent to her heart');
+  // Send push notification to all subscribers
+  try {
+    await fetch("https://api.onesignal.com/notifications", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Key ${OS_API_KEY}`
+      },
+      body: JSON.stringify({
+        app_id: OS_APP_ID,
+        included_segments: ["All"],
+        headings: { en: "Sweet Embrace 💛" },
+        contents: { en: "He's thinking of you right now 💕" },
+        url: "https://ismailulhaq9261-blip.github.io/sweet-embrace"
+      })
+    });
+  } catch(e) { console.log('Push notification error:', e); }
 }
 
 async function checkTOY() {
