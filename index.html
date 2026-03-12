@@ -1,0 +1,2253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#C9A961">
+<title>Sweet Embrace Daily 💕</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Jost:wght@300;400;500&family=Dancing+Script:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #120a04;
+  --bg2: #1c0f06;
+  --brown: #8B4513;
+  --brown2: #A0522D;
+  --gold: #C9A961;
+  --gold2: #D4A017;
+  --gold-light: #F0D080;
+  --cream: #F5E6D3;
+  --cream2: #FFF8DC;
+  --text: #F5E6D3;
+  --text-dim: rgba(245,230,211,0.55);
+  --text-faint: rgba(245,230,211,0.25);
+  --card: rgba(255,255,255,0.04);
+  --card-border: rgba(201,169,97,0.2);
+  --pink: #FF85A1;
+  --font-display: 'Cormorant Garamond', serif;
+  --font-ui: 'Jost', sans-serif;
+  --font-script: 'Dancing Script', cursive;
+  --radius: 18px;
+  --nav-h: 68px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  height: 100%; background: var(--bg);
+  font-family: var(--font-ui); color: var(--text);
+  overflow: hidden;
+}
+
+#app {
+  height: 100dvh; max-width: 430px;
+  margin: 0 auto; position: relative;
+  overflow: hidden; display: flex; flex-direction: column;
+}
+
+/* ===== FLOATING BACKGROUND ===== */
+.floating-bg {
+  position: fixed; inset: 0; pointer-events: none;
+  z-index: 0; overflow: hidden; max-width: 430px;
+  margin: 0 auto;
+}
+.float-word {
+  position: absolute; white-space: nowrap;
+  font-family: var(--font-display); font-style: italic;
+  color: var(--gold); opacity: 0.06;
+  animation: floatMove linear infinite;
+  user-select: none;
+}
+@keyframes floatMove {
+  0% { transform: translateY(110vh) rotate(-5deg); opacity: 0; }
+  5% { opacity: 0.06; }
+  95% { opacity: 0.06; }
+  100% { transform: translateY(-20vh) rotate(5deg); opacity: 0; }
+}
+
+/* ===== SCROLLABLE CONTENT ===== */
+.page {
+  flex: 1; overflow-y: auto; overflow-x: hidden;
+  padding: 20px 18px calc(var(--nav-h) + 20px);
+  position: relative; z-index: 1;
+  -webkit-overflow-scrolling: touch;
+}
+.page.hidden { display: none; }
+
+/* ===== LOGIN ===== */
+#login-screen {
+  position: fixed; inset: 0; z-index: 100;
+  background: var(--bg);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 24px;
+}
+#login-screen.hidden { display: none; }
+
+.login-title {
+  font-family: var(--font-display);
+  font-size: 3.2rem; font-weight: 300;
+  line-height: 1.1; text-align: center;
+  color: var(--cream); margin-bottom: 4px;
+  letter-spacing: 0.02em;
+}
+.login-title i { font-style: italic; color: var(--gold); }
+.login-sub {
+  font-size: 0.72rem; letter-spacing: 0.28em;
+  text-transform: uppercase; color: var(--gold);
+  opacity: 0.7; margin-bottom: 48px; text-align: center;
+}
+
+.pin-card {
+  width: 100%; max-width: 320px;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 24px; padding: 32px 28px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+.pin-label {
+  font-size: 0.7rem; letter-spacing: 0.25em;
+  text-transform: uppercase; color: var(--gold);
+  text-align: center; margin-bottom: 20px;
+}
+.pin-dots {
+  display: flex; gap: 16px;
+  justify-content: center; margin-bottom: 28px;
+}
+.pin-dot {
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 1.5px solid rgba(201,169,97,0.35);
+  transition: all 0.2s;
+}
+.pin-dot.filled {
+  background: var(--gold);
+  border-color: var(--gold);
+  box-shadow: 0 0 12px rgba(201,169,97,0.6);
+}
+.pin-dot.error {
+  background: #e07070; border-color: #e07070;
+  animation: shake 0.4s ease;
+}
+@keyframes shake {
+  0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)}
+}
+
+.numpad {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 10px;
+}
+.num-key {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px; color: var(--cream);
+  font-family: var(--font-ui); font-size: 1.4rem;
+  font-weight: 300; padding: 15px 10px;
+  cursor: pointer; transition: all 0.15s;
+  text-align: center;
+}
+.num-key:active, .num-key:hover {
+  background: rgba(201,169,97,0.18);
+  border-color: rgba(201,169,97,0.4);
+}
+.num-key.del { font-size: 1.1rem; color: var(--text-dim); }
+.num-key.empty { pointer-events: none; background: none; border: none; }
+.pin-error {
+  text-align: center; color: #e07070;
+  font-size: 0.78rem; margin-top: 14px;
+  letter-spacing: 0.1em;
+}
+
+/* ===== TOP BAR ===== */
+.topbar {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 52px 18px 12px;
+  position: relative; z-index: 1;
+  flex-shrink: 0;
+}
+.topbar-title {
+  font-family: var(--font-display);
+  font-size: 1.6rem; font-weight: 300;
+  color: var(--cream); letter-spacing: 0.03em;
+}
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+.role-badge {
+  font-size: 0.62rem; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--gold);
+  background: rgba(201,169,97,0.12);
+  border: 1px solid rgba(201,169,97,0.2);
+  padding: 4px 10px; border-radius: 20px;
+}
+.lock-btn {
+  background: none; border: none; cursor: pointer;
+  color: var(--text-dim); font-size: 1.1rem;
+  padding: 4px; transition: color 0.2s;
+}
+.lock-btn:hover { color: var(--gold); }
+
+/* thinking of you indicator */
+.toy-indicator {
+  display: none; align-items: center; gap: 6px;
+  background: rgba(255,100,100,0.15);
+  border: 1px solid rgba(255,100,100,0.3);
+  border-radius: 20px; padding: 5px 12px;
+  cursor: pointer; animation: pulse-red 2s infinite;
+}
+.toy-indicator.show { display: flex; }
+.toy-dot { width: 8px; height: 8px; border-radius: 50%; background: #ff6464; }
+.toy-text { font-size: 0.7rem; color: #ff9090; letter-spacing: 0.05em; }
+@keyframes pulse-red {
+  0%,100%{box-shadow:0 0 0 0 rgba(255,100,100,0.3)}
+  50%{box-shadow:0 0 0 6px rgba(255,100,100,0)}
+}
+
+/* ===== BOTTOM NAV ===== */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 100%; max-width: 430px;
+  background: rgba(18,10,4,0.92);
+  border-top: 1px solid rgba(201,169,97,0.15);
+  backdrop-filter: blur(20px);
+  display: flex; height: var(--nav-h);
+  z-index: 50; padding-bottom: env(safe-area-inset-bottom);
+}
+.nav-btn {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 4px; background: none; border: none;
+  cursor: pointer; color: var(--text-faint);
+  transition: all 0.2s; font-family: var(--font-ui);
+  padding: 8px 4px;
+}
+.nav-btn.active { color: var(--gold); }
+.nav-btn .nav-icon { font-size: 1.3rem; }
+.nav-btn .nav-label {
+  font-size: 0.6rem; letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ===== CARDS ===== */
+.card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 20px; margin-bottom: 14px;
+  backdrop-filter: blur(10px);
+}
+.card.glow { box-shadow: 0 0 30px rgba(201,169,97,0.12); }
+.card-tag {
+  font-size: 0.62rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--gold);
+  margin-bottom: 8px;
+}
+.card-title {
+  font-family: var(--font-display);
+  font-size: 1.3rem; font-weight: 300;
+  color: var(--cream); margin-bottom: 6px;
+}
+.card-body {
+  font-family: var(--font-display);
+  font-size: 1.05rem; font-weight: 300;
+  font-style: italic; line-height: 1.65;
+  color: var(--cream);
+}
+
+/* ===== MESSAGES PAGE ===== */
+.msg-slot {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 22px 20px; margin-bottom: 14px;
+  transition: all 0.3s;
+  position: relative; overflow: hidden;
+}
+.msg-slot::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0;
+}
+.msg-slot.unlocked::before { opacity: 0.6; }
+.msg-slot.unlocked {
+  border-color: rgba(201,169,97,0.35);
+  background: rgba(201,169,97,0.05);
+}
+.slot-header {
+  display: flex; align-items: center;
+  justify-content: space-between; margin-bottom: 12px;
+}
+.slot-label {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.68rem; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--gold);
+}
+.slot-status {
+  font-size: 0.65rem; padding: 3px 9px;
+  border-radius: 20px; letter-spacing: 0.08em;
+}
+.slot-status.open {
+  background: rgba(201,169,97,0.18); color: var(--gold-light);
+}
+.slot-status.locked {
+  background: rgba(255,255,255,0.06); color: var(--text-faint);
+}
+.slot-message {
+  font-family: var(--font-display);
+  font-size: 1.08rem; font-style: italic;
+  font-weight: 300; line-height: 1.65;
+  color: var(--cream);
+  animation: fadeInUp 0.6s ease;
+}
+.slot-locked {
+  display: flex; align-items: center; gap: 10px;
+  color: var(--text-faint); font-size: 0.85rem;
+}
+.slot-countdown {
+  font-size: 1.4rem; font-weight: 300;
+  color: var(--gold); letter-spacing: 0.05em;
+  margin-top: 4px; font-family: var(--font-ui);
+}
+@keyframes fadeInUp {
+  from { opacity:0; transform:translateY(10px); }
+  to { opacity:1; transform:translateY(0); }
+}
+
+.miss-me-btn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--brown2), var(--brown));
+  border: 1px solid rgba(201,169,97,0.3);
+  border-radius: var(--radius); color: var(--cream);
+  font-family: var(--font-display); font-size: 1.1rem;
+  font-style: italic; letter-spacing: 0.05em;
+  padding: 18px; cursor: pointer; margin-bottom: 12px;
+  transition: all 0.2s;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.4);
+}
+.miss-me-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(0,0,0,0.5); }
+
+.miss-msg-card {
+  background: linear-gradient(135deg, rgba(139,69,19,0.15), rgba(201,169,97,0.08));
+  border: 1px solid rgba(201,169,97,0.3);
+  border-radius: var(--radius); padding: 22px 20px;
+  margin-bottom: 14px; display: none;
+  animation: fadeInUp 0.5s ease;
+}
+.miss-msg-card.show { display: block; }
+.miss-msg-text {
+  font-family: var(--font-display); font-size: 1.1rem;
+  font-style: italic; line-height: 1.7; color: var(--cream);
+  text-align: center;
+}
+
+.toy-btn {
+  width: 100%; background: rgba(255,100,100,0.08);
+  border: 1px solid rgba(255,100,100,0.2);
+  border-radius: var(--radius); color: #ff9090;
+  font-family: var(--font-ui); font-size: 0.82rem;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  padding: 14px; cursor: pointer; transition: all 0.2s;
+  margin-bottom: 14px;
+}
+.toy-btn:hover { background: rgba(255,100,100,0.15); }
+.toy-sent { text-align: center; color: #ff9090; font-size: 0.78rem; margin-bottom: 14px; animation: fadeInUp 0.4s; }
+
+/* ===== POEMS PAGE ===== */
+.poem-card {
+  border-radius: var(--radius); padding: 28px 22px;
+  margin-bottom: 16px; position: relative;
+  overflow: hidden;
+}
+.poem-card.style-parchment {
+  background: linear-gradient(135deg, #2a1f0e, #1e1508);
+  border: 1px solid rgba(201,169,97,0.3);
+}
+.poem-card.style-roses {
+  background: linear-gradient(135deg, #200a12, #1a0808);
+  border: 1px solid rgba(255,133,161,0.25);
+}
+.poem-card.style-stars {
+  background: linear-gradient(135deg, #080a1a, #0a0c1e);
+  border: 1px solid rgba(100,120,255,0.2);
+}
+.poem-card.style-gold {
+  background: linear-gradient(135deg, #1a1200, #201600);
+  border: 1px solid rgba(212,160,23,0.4);
+}
+.poem-card.style-blossom {
+  background: linear-gradient(135deg, #1a0c10, #120808);
+  border: 1px solid rgba(255,160,180,0.2);
+}
+.poem-card.style-ink {
+  background: linear-gradient(135deg, #0e0e0e, #1a1a18);
+  border: 1px solid rgba(200,200,180,0.15);
+}
+.poem-deco {
+  position: absolute; top: 10px; right: 14px;
+  font-size: 1.8rem; opacity: 0.15;
+}
+.poem-text {
+  font-family: var(--font-script); font-size: 1.05rem;
+  line-height: 1.8; color: var(--cream); text-align: center;
+  white-space: pre-wrap; margin-bottom: 16px;
+}
+.poem-footer {
+  text-align: center; font-size: 0.7rem;
+  color: var(--text-dim); letter-spacing: 0.1em;
+}
+.poem-sig {
+  font-family: var(--font-script); font-size: 0.95rem;
+  color: var(--gold); margin-top: 4px;
+}
+
+.fab {
+  position: fixed; bottom: calc(var(--nav-h) + 16px);
+  right: max(16px, calc(50vw - 215px + 16px));
+  width: 52px; height: 52px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold2), var(--brown));
+  border: none; color: white; font-size: 1.4rem;
+  cursor: pointer; z-index: 40;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.fab:hover { transform: scale(1.08); }
+
+/* ===== MODAL ===== */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,0.75);
+  display: flex; align-items: flex-end;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+.modal-overlay.hidden { display: none; }
+.modal {
+  width: 100%; max-width: 430px;
+  background: #1c1006; border-radius: 24px 24px 0 0;
+  padding: 28px 22px 36px;
+  border-top: 1px solid var(--card-border);
+  max-height: 88vh; overflow-y: auto;
+  animation: slideUp 0.3s ease;
+}
+@keyframes slideUp {
+  from{transform:translateY(100%)} to{transform:translateY(0)}
+}
+.modal-title {
+  font-family: var(--font-display); font-size: 1.5rem;
+  font-weight: 300; color: var(--cream); margin-bottom: 20px;
+}
+.field-label {
+  font-size: 0.68rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--gold);
+  opacity: 0.8; display: block; margin-bottom: 8px;
+}
+textarea, input[type=text], input[type=date], select {
+  width: 100%; background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(201,169,97,0.2);
+  border-radius: 12px; color: var(--cream);
+  font-family: var(--font-ui); font-size: 0.9rem;
+  padding: 12px 14px; outline: none;
+  transition: border-color 0.2s; margin-bottom: 16px;
+  -webkit-appearance: none;
+}
+textarea:focus, input:focus, select:focus {
+  border-color: rgba(201,169,97,0.5);
+}
+textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
+textarea.script { font-family: var(--font-script); font-size: 1rem; }
+select option { background: #1c1006; }
+
+.style-picker {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 8px; margin-bottom: 16px;
+}
+.style-swatch {
+  border-radius: 10px; padding: 10px 6px;
+  text-align: center; cursor: pointer;
+  font-size: 0.65rem; letter-spacing: 0.1em;
+  border: 2px solid transparent;
+  transition: all 0.2s; color: var(--cream);
+}
+.style-swatch.sel { border-color: var(--gold); }
+.style-swatch.sw-parchment { background: linear-gradient(135deg,#2a1f0e,#1e1508); }
+.style-swatch.sw-roses { background: linear-gradient(135deg,#200a12,#1a0808); }
+.style-swatch.sw-stars { background: linear-gradient(135deg,#080a1a,#0a0c1e); }
+.style-swatch.sw-gold { background: linear-gradient(135deg,#1a1200,#201600); }
+.style-swatch.sw-blossom { background: linear-gradient(135deg,#1a0c10,#120808); }
+.style-swatch.sw-ink { background: linear-gradient(135deg,#0e0e0e,#1a1a18); }
+
+.btn-primary {
+  width: 100%; background: linear-gradient(135deg, var(--brown2), var(--brown));
+  border: none; border-radius: 14px; color: var(--cream);
+  font-family: var(--font-ui); font-size: 0.82rem;
+  font-weight: 500; letter-spacing: 0.18em;
+  text-transform: uppercase; padding: 16px;
+  cursor: pointer; transition: all 0.2s;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  margin-bottom: 10px;
+}
+.btn-primary:hover { transform: translateY(-1px); }
+.btn-secondary {
+  width: 100%; background: none;
+  border: 1px solid rgba(201,169,97,0.2);
+  border-radius: 14px; color: var(--text-dim);
+  font-family: var(--font-ui); font-size: 0.82rem;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  padding: 14px; cursor: pointer;
+}
+
+/* ===== DISTANCE PAGE ===== */
+.avatars-row {
+  display: flex; align-items: center;
+  justify-content: center; gap: 16px;
+  margin-bottom: 24px;
+}
+.avatar-wrap { text-align: center; }
+.avatar-circle {
+  width: 110px; height: 110px; border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+  border: 2px solid rgba(201,169,97,0.3);
+  overflow: hidden; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.5rem; margin-bottom: 8px;
+  transition: border-color 0.2s; position: relative;
+}
+.avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
+.avatar-circle:hover { border-color: var(--gold); }
+.avatar-name {
+  font-size: 0.72rem; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--gold);
+}
+.avatar-country { font-size: 0.7rem; color: var(--text-dim); margin-top: 2px; }
+.hearts-divider {
+  font-size: 1.3rem; text-align: center;
+  animation: heartbeat 2s infinite;
+}
+@keyframes heartbeat {
+  0%,100%{transform:scale(1)} 50%{transform:scale(1.15)}
+}
+
+.distance-display {
+  text-align: center; padding: 28px 20px;
+  background: var(--card); border: 1px solid var(--card-border);
+  border-radius: var(--radius); margin-bottom: 14px;
+}
+.distance-number {
+  font-family: var(--font-display); font-size: 3rem;
+  font-weight: 300; color: var(--gold-light);
+  letter-spacing: -0.02em;
+}
+.distance-unit { font-size: 1rem; color: var(--text-dim); margin-bottom: 10px; }
+.distance-quote {
+  font-family: var(--font-display); font-style: italic;
+  font-size: 0.95rem; color: var(--text-dim); line-height: 1.5;
+}
+
+.stats-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px; margin-bottom: 14px;
+}
+.stat-card {
+  background: var(--card); border: 1px solid var(--card-border);
+  border-radius: 14px; padding: 16px; text-align: center;
+}
+.stat-icon { font-size: 1.4rem; margin-bottom: 6px; }
+.stat-label {
+  font-size: 0.62rem; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--text-dim);
+  margin-bottom: 4px;
+}
+.stat-value {
+  font-family: var(--font-display); font-size: 1.1rem;
+  color: var(--cream);
+}
+
+/* ===== VOICE NOTES ===== */
+.voice-card {
+  background: var(--card); border: 1px solid var(--card-border);
+  border-radius: var(--radius); padding: 18px 20px;
+  margin-bottom: 12px; transition: all 0.2s;
+}
+.voice-card.unplayed { border-color: rgba(201,169,97,0.4); }
+.voice-header {
+  display: flex; align-items: center;
+  justify-content: space-between; margin-bottom: 10px;
+}
+.voice-title {
+  font-family: var(--font-display); font-size: 1rem;
+  color: var(--cream);
+}
+.new-badge {
+  font-size: 0.6rem; background: rgba(255,100,100,0.2);
+  color: #ff9090; border-radius: 10px;
+  padding: 2px 7px; letter-spacing: 0.1em;
+}
+.voice-meta { font-size: 0.7rem; color: var(--text-dim); margin-bottom: 12px; }
+.play-btn {
+  display: flex; align-items: center; gap: 8px;
+  background: linear-gradient(135deg, var(--brown2), var(--brown));
+  border: none; border-radius: 20px; color: var(--cream);
+  font-family: var(--font-ui); font-size: 0.78rem;
+  letter-spacing: 0.1em; padding: 8px 16px;
+  cursor: pointer; transition: all 0.2s;
+}
+.play-btn:hover { transform: scale(1.03); }
+.waveform {
+  display: flex; align-items: center; gap: 2px;
+  height: 20px; margin-left: 8px;
+}
+.wave-bar {
+  width: 3px; background: var(--gold);
+  border-radius: 2px; opacity: 0.6;
+  animation: wave 0.8s ease-in-out infinite;
+}
+.wave-bar:nth-child(2){animation-delay:0.1s}
+.wave-bar:nth-child(3){animation-delay:0.2s;height:14px!important}
+.wave-bar:nth-child(4){animation-delay:0.15s}
+.wave-bar:nth-child(5){animation-delay:0.25s}
+@keyframes wave {
+  0%,100%{transform:scaleY(0.5)} 50%{transform:scaleY(1)}
+}
+
+.record-section {
+  background: var(--card); border: 1px solid var(--card-border);
+  border-radius: var(--radius); padding: 24px 20px;
+  margin-bottom: 14px; text-align: center;
+}
+.record-title {
+  font-family: var(--font-display); font-size: 1.2rem;
+  margin-bottom: 16px; color: var(--cream);
+}
+.record-btn {
+  width: 80px; height: 80px; border-radius: 50%;
+  background: rgba(220,50,50,0.15);
+  border: 2px solid rgba(220,50,50,0.35);
+  font-size: 2rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 14px; transition: all 0.2s;
+}
+.record-btn.recording {
+  background: rgba(220,50,50,0.3);
+  border-color: #dc3232;
+  animation: pulse-record 1s infinite;
+}
+@keyframes pulse-record {
+  0%,100%{box-shadow:0 0 0 0 rgba(220,50,50,0.4)}
+  50%{box-shadow:0 0 0 12px rgba(220,50,50,0)}
+}
+.record-timer { font-size: 1.2rem; color: var(--gold); font-weight: 300; }
+.record-hint { font-size: 0.75rem; color: var(--text-dim); margin-top: 6px; }
+
+/* ===== MEMORY WALL ===== */
+.memory-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px; margin-bottom: 14px;
+}
+.memory-item {
+  border-radius: 14px; overflow: hidden;
+  background: var(--card); border: 1px solid var(--card-border);
+  cursor: pointer; transition: transform 0.2s;
+}
+.memory-item:hover { transform: scale(1.02); }
+.memory-photo {
+  width: 100%; aspect-ratio: 1;
+  object-fit: cover;
+}
+.memory-caption {
+  padding: 8px 10px; font-size: 0.75rem;
+  color: var(--text-dim); line-height: 1.3;
+}
+.memory-date { font-size: 0.65rem; color: var(--text-faint); margin-top: 2px; }
+
+/* photo lightbox */
+.lightbox {
+  position: fixed; inset: 0; z-index: 300;
+  background: rgba(0,0,0,0.93);
+  display: flex; align-items: center;
+  justify-content: center; padding: 20px;
+}
+.lightbox.hidden { display: none; }
+.lightbox img { max-width: 100%; max-height: 80vh; border-radius: 12px; }
+.lightbox-close {
+  position: absolute; top: 20px; right: 20px;
+  background: none; border: none; color: var(--cream);
+  font-size: 1.5rem; cursor: pointer;
+}
+.lightbox-caption {
+  position: absolute; bottom: 30px; left: 0; right: 0;
+  text-align: center; color: var(--cream);
+  font-family: var(--font-display); font-style: italic;
+  font-size: 1rem; padding: 0 30px;
+}
+
+/* ===== UNSENT LETTERS ===== */
+.letter-card {
+  background: var(--card); border: 1px solid var(--card-border);
+  border-radius: var(--radius); padding: 20px;
+  margin-bottom: 14px; cursor: pointer;
+  transition: all 0.2s;
+}
+.letter-card:hover { border-color: rgba(201,169,97,0.35); }
+.letter-card.sealed { text-align: center; padding: 30px; }
+.letter-envelope { font-size: 3rem; margin-bottom: 10px; }
+.letter-sealed-text {
+  font-family: var(--font-display); font-style: italic;
+  color: var(--text-dim); font-size: 0.95rem;
+}
+.letter-title {
+  font-family: var(--font-display); font-size: 1.15rem;
+  color: var(--cream); margin-bottom: 6px;
+}
+.letter-preview {
+  font-family: var(--font-script); font-size: 0.9rem;
+  color: var(--text-dim); line-height: 1.5;
+  overflow: hidden; display: -webkit-box;
+  -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+}
+.letter-meta { font-size: 0.68rem; color: var(--text-faint); margin-top: 8px; }
+
+/* letter full view */
+.letter-full {
+  position: fixed; inset: 0; z-index: 150;
+  background: #120a04; padding: 24px 20px;
+  overflow-y: auto; display: flex; flex-direction: column;
+}
+.letter-full.hidden { display: none; }
+.letter-back {
+  background: none; border: none; color: var(--gold);
+  font-size: 0.82rem; letter-spacing: 0.15em;
+  cursor: pointer; margin-bottom: 24px;
+  text-align: left; padding: 0;
+}
+.letter-full-title {
+  font-family: var(--font-display); font-size: 1.8rem;
+  font-weight: 300; color: var(--cream);
+  margin-bottom: 6px; letter-spacing: 0.02em;
+}
+.letter-full-date { font-size: 0.72rem; color: var(--text-dim); margin-bottom: 28px; }
+.letter-full-body {
+  font-family: var(--font-script); font-size: 1.15rem;
+  line-height: 1.9; color: var(--cream);
+  white-space: pre-wrap; flex: 1;
+}
+.letter-full-sig {
+  font-family: var(--font-script); font-size: 1.3rem;
+  color: var(--gold); text-align: right;
+  margin-top: 32px;
+}
+
+/* ===== SPECIAL DAY BANNER ===== */
+.special-banner {
+  background: linear-gradient(135deg, rgba(201,169,97,0.2), rgba(139,69,19,0.2));
+  border: 1px solid rgba(201,169,97,0.4);
+  border-radius: var(--radius); padding: 18px 20px;
+  margin-bottom: 14px; text-align: center;
+  display: none; animation: fadeInUp 0.5s ease;
+}
+.special-banner.show { display: block; }
+.special-banner-icon { font-size: 2rem; margin-bottom: 6px; }
+.special-banner-title {
+  font-family: var(--font-display); font-size: 1.4rem;
+  color: var(--gold-light); margin-bottom: 4px;
+}
+.special-banner-sub { font-size: 0.82rem; color: var(--text-dim); }
+
+/* confetti */
+.confetti-piece {
+  position: fixed; width: 8px; height: 8px;
+  border-radius: 2px; z-index: 999;
+  pointer-events: none;
+  animation: confettiFall 3s ease-in forwards;
+}
+@keyframes confettiFall {
+  0%{transform:translateY(-20px) rotate(0deg);opacity:1}
+  100%{transform:translateY(100vh) rotate(720deg);opacity:0}
+}
+
+/* together animation */
+#together-overlay {
+  position: fixed; inset: 0; z-index: 500;
+  background: rgba(0,0,0,0.9);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; padding: 24px;
+}
+#together-overlay.hidden { display: none; }
+.together-title {
+  font-family: var(--font-display); font-size: 2.5rem;
+  font-weight: 300; color: var(--gold-light);
+  margin-bottom: 10px; animation: pulse-glow 1.5s infinite;
+}
+@keyframes pulse-glow {
+  0%,100%{text-shadow:0 0 20px rgba(201,169,97,0.5)}
+  50%{text-shadow:0 0 40px rgba(201,169,97,0.9)}
+}
+.together-hearts { font-size: 3rem; letter-spacing: 10px; animation: heartbeat 1s infinite; }
+.together-sub {
+  font-family: var(--font-display); font-style: italic;
+  font-size: 1.1rem; color: var(--text-dim); margin-top: 16px;
+}
+
+/* ===== SECTION HEADER ===== */
+.section-header {
+  margin-bottom: 20px;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: 1.8rem; font-weight: 300;
+  color: var(--cream); letter-spacing: 0.02em;
+}
+.section-sub {
+  font-size: 0.75rem; color: var(--text-dim);
+  margin-top: 4px; letter-spacing: 0.1em;
+}
+
+/* ===== LOADING ===== */
+.loading {
+  text-align: center; padding: 32px;
+  color: var(--text-faint); font-size: 0.85rem;
+  letter-spacing: 0.1em;
+}
+
+/* ===== EMPTY STATE ===== */
+.empty {
+  text-align: center; padding: 48px 20px;
+  font-family: var(--font-display); font-style: italic;
+  color: var(--text-faint); font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+/* ===== MORE PAGE ===== */
+.more-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 14px; margin-bottom: 20px;
+}
+.more-card {
+  background: var(--card); border: 1px solid var(--card-border);
+  border-radius: var(--radius); padding: 24px 16px;
+  text-align: center; cursor: pointer; transition: all 0.2s;
+}
+.more-card:hover { border-color: rgba(201,169,97,0.4); transform: translateY(-2px); }
+.more-card-icon { font-size: 2rem; margin-bottom: 10px; }
+.more-card-title {
+  font-family: var(--font-display); font-size: 1rem;
+  color: var(--cream); margin-bottom: 4px;
+}
+.more-card-sub { font-size: 0.68rem; color: var(--text-dim); line-height: 1.4; }
+
+/* ===== FILE INPUT ===== */
+input[type=file] { display: none; }
+
+/* ===== TOAST ===== */
+.toast {
+  position: fixed; bottom: calc(var(--nav-h) + 16px);
+  left: 50%; transform: translateX(-50%);
+  background: rgba(30,20,10,0.95);
+  border: 1px solid var(--card-border);
+  border-radius: 20px; padding: 10px 20px;
+  font-size: 0.82rem; color: var(--cream);
+  z-index: 1000; white-space: nowrap;
+  animation: toastIn 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+@keyframes toastIn {
+  from{opacity:0;transform:translateX(-50%) translateY(10px)}
+  to{opacity:1;transform:translateX(-50%) translateY(0)}
+}
+
+/* ===== ADMIN DELETE BTN ===== */
+.del-btn {
+  background: none; border: none; cursor: pointer;
+  color: rgba(220,80,80,0.4); font-size: 0.8rem;
+  padding: 4px 6px; transition: color 0.2s;
+  float: right;
+}
+.del-btn:hover { color: rgba(220,80,80,0.8); }
+
+/* ===== SEAL TOGGLE ===== */
+.seal-btn {
+  background: none; border: 1px solid rgba(201,169,97,0.2);
+  border-radius: 8px; color: var(--text-dim);
+  font-size: 0.7rem; letter-spacing: 0.1em;
+  padding: 4px 10px; cursor: pointer; transition: all 0.2s;
+  margin-top: 8px;
+}
+.seal-btn:hover { border-color: rgba(201,169,97,0.4); color: var(--gold); }
+
+/* ===== CITY SELECTOR ===== */
+.city-row {
+  display: flex; gap: 10px; margin-bottom: 14px;
+}
+.city-row select { flex: 1; margin-bottom: 0; }
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- Floating Background -->
+  <div class="floating-bg" id="floatingBg"></div>
+
+  <!-- Login Screen -->
+  <div id="login-screen">
+    <div class="login-title">Sweet<br><i>Embrace</i></div>
+    <div class="login-sub">our little world 💛</div>
+    <div class="pin-card">
+      <div class="pin-label">Enter your PIN</div>
+      <div class="pin-dots" id="pinDots">
+        <div class="pin-dot" id="d0"></div>
+        <div class="pin-dot" id="d1"></div>
+        <div class="pin-dot" id="d2"></div>
+        <div class="pin-dot" id="d3"></div>
+      </div>
+      <div class="numpad">
+        <button class="num-key" onclick="pinPress('1')">1</button>
+        <button class="num-key" onclick="pinPress('2')">2</button>
+        <button class="num-key" onclick="pinPress('3')">3</button>
+        <button class="num-key" onclick="pinPress('4')">4</button>
+        <button class="num-key" onclick="pinPress('5')">5</button>
+        <button class="num-key" onclick="pinPress('6')">6</button>
+        <button class="num-key" onclick="pinPress('7')">7</button>
+        <button class="num-key" onclick="pinPress('8')">8</button>
+        <button class="num-key" onclick="pinPress('9')">9</button>
+        <button class="num-key empty"></button>
+        <button class="num-key" onclick="pinPress('0')">0</button>
+        <button class="num-key del" onclick="pinPress('del')">⌫</button>
+      </div>
+      <div class="pin-error" id="pinError" style="display:none">Wrong PIN, try again my love 🌹</div>
+    </div>
+  </div>
+
+  <!-- Top Bar -->
+  <div class="topbar" id="topbar" style="display:none">
+    <div class="topbar-title">Sweet Embrace 💛</div>
+    <div class="topbar-right">
+      <div class="toy-indicator" id="toyIndicator" onclick="seeTOY()">
+        <div class="toy-dot"></div>
+        <div class="toy-text">thinking of you</div>
+      </div>
+      <span class="role-badge" id="roleBadge"></span>
+      <button class="lock-btn" onclick="lockApp()">🔒</button>
+    </div>
+  </div>
+
+  <!-- Pages -->
+  <div class="page hidden" id="page-messages">
+    <div class="section-header">
+      <div class="section-title">Daily Messages</div>
+      <div class="section-sub">just for you, always 💕</div>
+    </div>
+    <div class="special-banner" id="specialBanner">
+      <div class="special-banner-icon" id="specialIcon">🎂</div>
+      <div class="special-banner-title" id="specialTitle">Special Day!</div>
+      <div class="special-banner-sub" id="specialSub"></div>
+    </div>
+    <div id="msgSlots"></div>
+    <div class="miss-msg-card" id="missMsgCard">
+      <div class="miss-msg-text" id="missMsgText"></div>
+    </div>
+    <button class="miss-me-btn" onclick="showMissMe()">💕 When You Miss Me...</button>
+    <button class="toy-btn" id="toyBtn" onclick="sendTOY()" style="display:none">🔴 I'm thinking of you right now</button>
+    <div class="toy-sent" id="toySent" style="display:none">💕 She'll feel it...</div>
+  </div>
+
+  <div class="page hidden" id="page-poems">
+    <div class="section-header">
+      <div class="section-title">Poems For You 📖</div>
+      <div class="section-sub">written with love, just for you 💕</div>
+    </div>
+    <div id="poemsContainer"><div class="loading">Loading poems...</div></div>
+    <button class="fab" id="poemFab" onclick="openPoemModal()" style="display:none">✍️</button>
+  </div>
+
+  <div class="page hidden" id="page-distance">
+    <div class="section-header">
+      <div class="section-title">Distance Between Us 🌍</div>
+      <div class="section-sub">but never far in heart 💕</div>
+    </div>
+    <div class="avatars-row" id="avatarsRow">
+      <div class="avatar-wrap">
+        <div class="avatar-circle" id="avatarI" onclick="uploadAvatar('admin')">👤</div>
+        <div class="avatar-name">I 💙</div>
+        <div class="avatar-country" id="countryI">—</div>
+      </div>
+      <div class="hearts-divider">💛<br>∞<br>💛</div>
+      <div class="avatar-wrap">
+        <div class="avatar-circle" id="avatarA" onclick="uploadAvatar('her')">👤</div>
+        <div class="avatar-name">A 💗</div>
+        <div class="avatar-country" id="countryA">—</div>
+      </div>
+    </div>
+    <input type="file" id="avatarFileInput" accept="image/*" onchange="handleAvatarUpload(event)">
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-tag">📍 Update Location</div>
+      <div class="city-row">
+        <select id="citySelect" onchange="saveCity()">
+          <option value="">Choose your city...</option>
+        </select>
+      </div>
+    </div>
+    <div class="distance-display" id="distanceDisplay" ondblclick="triggerTogether()" title="Double-tap when together 💕">
+      <div class="distance-number" id="distanceNum">—</div>
+      <div class="distance-unit">km apart</div>
+      <div class="distance-quote" id="distanceQuote">"Distance means so little when you mean so much" 💖</div>
+    </div>
+    <div class="stats-grid" style="grid-template-columns:1fr 1fr 1fr">
+      <div class="stat-card">
+        <div class="stat-icon">⏰</div>
+        <div class="stat-label">His Time</div>
+        <div class="stat-value" id="timeI">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🕐</div>
+        <div class="stat-label">Her Time</div>
+        <div class="stat-value" id="timeA">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">💛</div>
+        <div class="stat-label">Days Together</div>
+        <div class="stat-value" id="daysApart">—</div>
+      </div>
+    </div>
+    <div id="distanceAdminPanel" style="display:none">
+      <div class="card">
+        <div class="card-tag">⚙️ Admin Controls</div>
+        <label class="field-label">We started on (relationship start date)</label>
+        <input type="date" id="lastMetInput" onchange="saveDistanceDates()">
+        <div style="font-size:0.72rem;color:var(--text-dim);margin-top:-8px;line-height:1.5">💡 Double-tap the distance number on the day you finally meet to trigger the special animation 🥹</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page hidden" id="page-more">
+    <div class="section-header">
+      <div class="section-title">More 💛</div>
+      <div class="section-sub">everything else, just for us</div>
+    </div>
+    <div class="more-grid">
+      <div class="more-card" onclick="showSubPage('voice')">
+        <div class="more-card-icon">🎙️</div>
+        <div class="more-card-title">Voice Notes</div>
+        <div class="more-card-sub">Hear his voice anytime</div>
+      </div>
+      <div class="more-card" onclick="showSubPage('memory')">
+        <div class="more-card-icon">📸</div>
+        <div class="more-card-title">Memory Wall</div>
+        <div class="more-card-sub">Our moments together</div>
+      </div>
+      <div class="more-card" onclick="showSubPage('letters')" style="grid-column: span 2">
+        <div class="more-card-icon">💌</div>
+        <div class="more-card-title">Unsent Letters</div>
+        <div class="more-card-sub">Words I'd say if you were here</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sub Pages -->
+  <div class="page hidden" id="page-voice">
+    <button class="letter-back" onclick="showPage('more')">← Back</button>
+    <div class="section-header">
+      <div class="section-title">Voice Notes 🎙️</div>
+    </div>
+    <div id="recordSection" style="display:none">
+      <div class="record-section">
+        <div class="record-title">Record for her 🎤</div>
+        <div class="record-btn" id="recordBtn" onclick="toggleRecord()">🎙️</div>
+        <div class="record-timer" id="recordTimer">0:00</div>
+        <div class="record-hint">Tap to start recording</div>
+        <div id="recordingControls" style="display:none;margin-top:14px">
+          <input type="text" id="noteTitle" placeholder="Give it a title..." style="margin-bottom:10px">
+          <button class="btn-primary" onclick="saveVoiceNote()">Save & Send 💕</button>
+        </div>
+      </div>
+    </div>
+    <div id="voiceNotesContainer"><div class="loading">Loading...</div></div>
+  </div>
+
+  <div class="page hidden" id="page-memory">
+    <button class="letter-back" onclick="showPage('more')">← Back</button>
+    <div class="section-header">
+      <div class="section-title">Memory Wall 📸</div>
+    </div>
+    <input type="file" id="memoryFileInput" accept="image/*" onchange="handleMemoryUpload(event)">
+    <div id="memoryAdminBtn" style="display:none;margin-bottom:14px">
+      <button class="btn-primary" onclick="document.getElementById('memoryFileInput').click()">+ Add Memory 📸</button>
+    </div>
+    <div class="memory-grid" id="memoryGrid"></div>
+  </div>
+
+  <div class="page hidden" id="page-letters">
+    <button class="letter-back" onclick="showPage('more')">← Back</button>
+    <div class="section-header">
+      <div class="section-title">Unsent Letters 💌</div>
+    </div>
+    <div id="lettersAdminBtn" style="display:none;margin-bottom:14px">
+      <button class="btn-primary" onclick="openLetterModal()">Write a Letter ✍️</button>
+    </div>
+    <div id="lettersContainer"><div class="loading">Loading...</div></div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <nav class="bottom-nav" id="bottomNav" style="display:none">
+    <button class="nav-btn active" id="nav-messages" onclick="showPage('messages')">
+      <span class="nav-icon">💌</span>
+      <span class="nav-label">Messages</span>
+    </button>
+    <button class="nav-btn" id="nav-poems" onclick="showPage('poems')">
+      <span class="nav-icon">📖</span>
+      <span class="nav-label">Poems</span>
+    </button>
+    <button class="nav-btn" id="nav-distance" onclick="showPage('distance')">
+      <span class="nav-icon">🌍</span>
+      <span class="nav-label">Distance</span>
+    </button>
+    <button class="nav-btn" id="nav-more" onclick="showPage('more')">
+      <span class="nav-icon">💛</span>
+      <span class="nav-label">More</span>
+    </button>
+  </nav>
+
+  <!-- Modals -->
+  <div class="modal-overlay hidden" id="poemModal">
+    <div class="modal">
+      <div class="modal-title">Write a Poem ✍️</div>
+      <label class="field-label">Your poem</label>
+      <textarea class="script" id="poemText" placeholder="Write from your heart...&#10;Let the words flow freely..."></textarea>
+      <label class="field-label">Background style</label>
+      <div class="style-picker">
+        <div class="style-swatch sw-parchment sel" data-style="parchment" onclick="selectStyle(this)">📜 Parchment</div>
+        <div class="style-swatch sw-roses" data-style="roses" onclick="selectStyle(this)">🌹 Roses</div>
+        <div class="style-swatch sw-stars" data-style="stars" onclick="selectStyle(this)">✨ Stars</div>
+        <div class="style-swatch sw-gold" data-style="gold" onclick="selectStyle(this)">💛 Gold</div>
+        <div class="style-swatch sw-blossom" data-style="blossom" onclick="selectStyle(this)">🌸 Blossom</div>
+        <div class="style-swatch sw-ink" data-style="ink" onclick="selectStyle(this)">🖋️ Ink</div>
+      </div>
+      <button class="btn-primary" onclick="savePoem()">Publish Poem 💕</button>
+      <button class="btn-secondary" onclick="closePoemModal()">Cancel</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay hidden" id="letterModal">
+    <div class="modal">
+      <div class="modal-title">Write a Letter 💌</div>
+      <label class="field-label">Title</label>
+      <input type="text" id="letterTitle" placeholder="A name for this letter...">
+      <label class="field-label">Your words</label>
+      <textarea class="script" id="letterBody" style="min-height:180px" placeholder="My dearest A,&#10;&#10;There are things I'd say if you were here right now..."></textarea>
+      <label class="field-label">Seal this letter?</label>
+      <select id="letterSealed">
+        <option value="true">🔒 Sealed — she'll see it when you unseal it</option>
+        <option value="false">💌 Open — she can read it now</option>
+      </select>
+      <button class="btn-primary" onclick="saveLetter()">Save Letter 💕</button>
+      <button class="btn-secondary" onclick="closeLetterModal()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Letter Full View -->
+  <div class="letter-full hidden" id="letterFullView">
+    <button class="letter-back" onclick="closeLetter()">← Back to Letters</button>
+    <div class="letter-full-title" id="lfTitle"></div>
+    <div class="letter-full-date" id="lfDate"></div>
+    <div class="letter-full-body" id="lfBody"></div>
+    <div class="letter-full-sig">With all my love, I 💛</div>
+  </div>
+
+  <!-- Together Overlay -->
+  <div id="together-overlay" class="hidden">
+    <div class="together-hearts">💕 💖 💗</div>
+    <div class="together-title">FINALLY TOGETHER!</div>
+    <div style="font-size:1.5rem;margin:10px 0">✨ Distance: 0 km ✨</div>
+    <div class="together-sub">Love: Infinity ∞</div>
+    <div class="together-hearts" style="margin-top:16px">💓 💞 💝</div>
+  </div>
+
+  <!-- Lightbox -->
+  <div class="lightbox hidden" id="lightbox" onclick="closeLightbox()">
+    <button class="lightbox-close">✕</button>
+    <img id="lightboxImg" src="" alt="">
+    <div class="lightbox-caption" id="lightboxCaption"></div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+// ===== CONFIG =====
+const SUPABASE_URL = 'https://lvmvyghhnrjtiqqzteea.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_OWf7vo2ebnUv-FnGwqa-Sg_vjCjVUc2';
+const PIN_ADMIN = '9261';
+const PIN_HER = '1014';
+const MACAU_OFFSET = 8; // UTC+8
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ===== STATE =====
+let currentUser = null; // 'admin' | 'her'
+let currentPage = 'messages';
+let pinBuffer = '';
+let recordingAvatar = null;
+let mediaRecorder = null;
+let audioChunks = [];
+let recordInterval = null;
+let recordSeconds = 0;
+let audioBlob = null;
+let selectedPoemStyle = 'parchment';
+let toyChannel = null;
+
+// ===== CITIES DATA =====
+const CITIES = [
+  {name:"Macau",country:"🇲🇴 Macau",tz:"Asia/Macau",lat:22.1987,lon:113.5439},
+  {name:"Hong Kong",country:"🇭🇰 Hong Kong",tz:"Asia/Hong_Kong",lat:22.3193,lon:114.1694},
+  {name:"Guangzhou",country:"🇨🇳 China",tz:"Asia/Shanghai",lat:23.1291,lon:113.2644},
+  {name:"Shanghai",country:"🇨🇳 China",tz:"Asia/Shanghai",lat:31.2304,lon:121.4737},
+  {name:"Beijing",country:"🇨🇳 China",tz:"Asia/Shanghai",lat:39.9042,lon:116.4074},
+  {name:"London",country:"🇬🇧 UK",tz:"Europe/London",lat:51.5074,lon:-0.1278},
+  {name:"Tokyo",country:"🇯🇵 Japan",tz:"Asia/Tokyo",lat:35.6762,lon:139.6503},
+  {name:"Seoul",country:"🇰🇷 South Korea",tz:"Asia/Seoul",lat:37.5665,lon:126.9780},
+  {name:"Singapore",country:"🇸🇬 Singapore",tz:"Asia/Singapore",lat:1.3521,lon:103.8198},
+  {name:"Kuala Lumpur",country:"🇲🇾 Malaysia",tz:"Asia/Kuala_Lumpur",lat:3.1390,lon:101.6869},
+  {name:"Bangkok",country:"🇹🇭 Thailand",tz:"Asia/Bangkok",lat:13.7563,lon:100.5018},
+  {name:"Sydney",country:"🇦🇺 Australia",tz:"Australia/Sydney",lat:-33.8688,lon:151.2093},
+  {name:"Dubai",country:"🇦🇪 UAE",tz:"Asia/Dubai",lat:25.2048,lon:55.2708},
+  {name:"Paris",country:"🇫🇷 France",tz:"Europe/Paris",lat:48.8566,lon:2.3522},
+  {name:"New York",country:"🇺🇸 USA",tz:"America/New_York",lat:40.7128,lon:-74.0060},
+  {name:"Toronto",country:"🇨🇦 Canada",tz:"America/Toronto",lat:43.6532,lon:-79.3832},
+  {name:"Taipei",country:"🇹🇼 Taiwan",tz:"Asia/Taipei",lat:25.0330,lon:121.5654},
+  {name:"Manila",country:"🇵🇭 Philippines",tz:"Asia/Manila",lat:14.5995,lon:120.9842},
+  {name:"Jakarta",country:"🇮🇩 Indonesia",tz:"Asia/Jakarta",lat:-6.2088,lon:106.8456},
+  {name:"Lisbon",country:"🇵🇹 Portugal",tz:"Europe/Lisbon",lat:38.7223,lon:-9.1393},
+];
+
+// ===== SPECIAL DAYS (Admin fills in) =====
+const SPECIAL_DAYS = [
+  // { date: "MM-DD", label: "Her Birthday 🎂", type: "birthday" },
+  // { date: "MM-DD", label: "Our Anniversary 💕", type: "anniversary" },
+];
+
+// ===== DAILY MESSAGES (30 per slot, indexed by day-of-year % 30) =====
+const MORNING_MSGS = [
+  "Good morning, my beautiful A ☀️ Before anything else today, know that you are the first thought in my mind and the warmest feeling in my heart. I love you endlessly 💕",
+  "Rise and shine, my love 🌅 Every sunrise reminds me that I get another day to love you from wherever I am. You are my favourite reason to wake up 🥰",
+  "Good morning gorgeous ☀️ I hope today wraps you in warmth and reminds you how truly special you are. I'm thinking of you with every breath 💛",
+  "Waking up knowing you exist in this world makes everything brighter, my love 🌞 Have the most beautiful day — you deserve nothing less 💕",
+  "Good morning A 🌸 Miles apart but my heart starts every day with you. I carry your smile with me everywhere I go today ✨",
+  "Hey you ☀️ Just a quick morning reminder that you are incredibly loved, deeply cherished, and always on my mind. Go make today amazing 💪💕",
+  "Good morning my darling 🌅 I wish I could wake up next to you. One day. Until then, know my first thought every morning belongs to you 💛",
+  "Morning love ☀️ You probably don't know how much light you bring into my life just by existing. I hope today treats you as wonderfully as you treat me 🥰",
+  "Good morning A 💕 Today is going to be a good day — I can feel it. And whatever comes, I want you to know I'm here, always, loving you from afar ✨",
+  "Rise, shine, and know you are adored 🌸 Good morning my love. The world is a better place because you're in it, and I'm the luckiest because you're mine 💛",
+  "Good morning beautiful ☀️ Take a deep breath today and remember: you are enough, you are loved, and I am so proud of you 💕",
+  "Hey sleepyhead ☀️ I hope you woke up feeling as incredible as you make me feel every single day. Mornings are better knowing they lead to hearing from you 🥰",
+  "Good morning A 🌅 I counted the hours of sleep just thinking about what you might be dreaming. I hope it was something as sweet as you are 💛✨",
+  "Morning, my heart 💕 Somewhere across the miles, I'm thinking of you, smiling because you exist, and grateful because you're mine. Good morning 🌸",
+  "Good morning love ☀️ Another day, the same endless love. Nothing changes the way I feel about you — not time, not distance, not anything 💪💕",
+  "Waking up and missing you is both the sweetest and most bittersweet thing ☀️ Good morning my A. I love you more each day 💛",
+  "Good morning gorgeous 🌸 Today is a blank page — write something beautiful on it. And know that every page of my story has your name on it 💕",
+  "Hey you ✨ Good morning from me to you. Just a little reminder that you are so deeply loved it would take forever to write it all down 🥰",
+  "Good morning A 💕 I hope your coffee is warm, your day is kind, and your heart knows how much it's loved today and always ☀️",
+  "Rise and shine my love 🌅 Today I want you to carry this with you: I am beyond lucky to have you in my life. Now go conquer your day 💛",
+  "Good morning sweetheart ☀️ The sun rises but nothing shines brighter than the thought of you. Have a beautiful day, my beautiful girl 🌸💕",
+  "Morning love 💕 Every day I wake up grateful — grateful that somewhere in this world, a girl named A loves me back. That's everything ✨",
+  "Good morning A 🌅 Near or far, you have all of my heart. Today and every day. Now smile that smile I love so much ☀️🥰",
+  "Good morning my darling 💛 Before the world asks anything of you today, I just want you to know: you are seen, loved, and cherished beyond words 💕",
+  "Hey beautiful ☀️ Morning! I miss you. There, I said it first. I hope today surprises you with something that makes you smile and think of me 😘",
+  "Good morning A 🌸 I may not be there to make you breakfast, but I can send you all the love in the world to start your day 💕✨",
+  "Morning, my love ☀️ Today is another chance to feel everything good — and you, my dear, are the goodest thing that ever happened to me 💛🥰",
+  "Good morning gorgeous 💕 I woke up thinking about your laugh. It's my favourite sound in the world. Have a wonderful day 🌸",
+  "Rise and shine A ✨ Long distance is hard but loving you is the easiest thing I have ever done. Good morning from my heart to yours 💛",
+  "Good morning my love 🌅 I hope today is as warm and wonderful as the feeling I get whenever I see your name on my screen 💕☀️",
+];
+
+const MIDDAY_MSGS = [
+  "Hey love 💕 Just stopping by in the middle of your day to remind you that someone out there is thinking about you and smiling. That someone is me 😊",
+  "Midday check-in ✨ How's your day going? Whatever the answer — know I'm here, rooting for you, and loving you through every moment of it 💛",
+  "Hey A 💗 It's the middle of the day and I couldn't stop thinking about you. So here I am. I miss you. That's all. Carry on 😘",
+  "Afternoon love ☀️ Take a breath. You're doing amazing. And if nobody told you that today — I'm telling you now. I'm so proud of you 💕",
+  "Hey beautiful 🌸 Midday reminder: you are loved. Deeply. Completely. Without condition. Just wanted you to know that right now 💛",
+  "Hello from the middle of the day 💕 I'm thinking about your eyes, your laugh, the way you make everything feel okay. Miss you so much A ✨",
+  "Midday love note 💌 I know your day might be busy and hard but somewhere in the world I am thinking only of you. You've got this 💪💛",
+  "Hey you 🌸 Quick midday reminder that you're the best thing in my life and I hope your afternoon is as wonderful as you are 💕",
+  "Afternoon check-in A ✨ Stop for a second. Breathe. You are doing so well. I love you and I'm here whenever you need me 💛",
+  "Hey love 💗 The afternoon sun is warm but not as warm as the feeling of loving you. Miss you. Thinking of you. Always 💕",
+  "Midday from me to you 🌸 I don't need to be there to know you're incredible. I see it in everything you do. Keep going A 💛✨",
+  "Hey beautiful ☀️ It's midday and I just wanted to send you some love across the miles. Consider yourself hugged 🤗💕",
+  "Afternoon reminder 💕 No matter what today throws at you, you are stronger than you know and more loved than you realise 💛",
+  "Hey A 🌸 I was in the middle of something and suddenly thought of your smile. That's all. Just your smile. I love you 💕",
+  "Midday love ✨ Half the day is done and you've been amazing through all of it. The second half belongs to you too 💪💛",
+  "Hey gorgeous ☀️ Just a little afternoon squeeze of love from me. I hope today has been kind to you my darling 🌸💕",
+  "Hello love 💗 It's the middle of the day and I'm missing you in the most wonderful, aching, beautiful way. Distance is hard. You're worth it 💛",
+  "Midday A ✨ I hope wherever you are and whatever you're doing right now, you can feel how much you're loved. Because you really are 💕",
+  "Afternoon check-in 🌸 You crossed my mind — again — like you always do. Every hour. Every day. I'm so in love with you 💛",
+  "Hey love ☀️ I know days can be long and hard. But you are never alone in yours. I'm always just a message away, always in your corner 💕",
+  "Midday from across the miles 💕 Missing you is a feeling I live with, and even that feels special because it means I have someone worth missing 💛✨",
+  "Hey A 🌸 The afternoon is yours. Own it. You're brilliant and beautiful and I love you — just in case you forgot in the last few hours 💕",
+  "Love note at midday 💌 I'm thinking about the last time we talked. And the time before that. And all the times yet to come 💛",
+  "Hey beautiful ✨ Afternoon sunshine reminder: you are my favourite person in the world. I hope today reflects just how amazing you are 💕",
+  "Midday check-in 💗 How are you really? I care. I'm listening. I'm here. And I love you more than any message could ever say 💛",
+  "Hey love ☀️ It's afternoon and I'm sending you a pocket full of sunshine to get you through the rest of the day 🌸💕",
+  "A quick midday I-love-you ✨ Because you deserve to hear it all day long, not just morning and night. I love you, A 💛",
+  "Afternoon love 💕 You are the highlight of every day even on days I don't get to speak to you. That's how deeply you're woven into my world 🌸",
+  "Hey you 💗 Midday and I'm miles away but my heart is right there with you. Carry it with you through the afternoon 💛✨",
+  "Afternoon A 🌸 Just reminding you mid-day that you are extraordinary, loved immensely, and I cannot wait to one day be in the same place as you 💕",
+];
+
+const GOODNIGHT_MSGS = [
+  "Goodnight A 🌙 As you close your eyes tonight, know that you are loved deeply and completely. Sleep well my beautiful girl. I'll be thinking of you until morning 💛",
+  "Sweet dreams my love 🌙✨ Today was better because I got to talk to you. Goodnight from my heart to yours. Rest easy 💕",
+  "Goodnight darling 🌙 The day is done and you survived it beautifully. Lay your head down and know that someone out here loves you fiercely 💛",
+  "As the night settles in 🌙 I want you to know that my last thought of the day is always you, A. Always you. Goodnight, my love 💕",
+  "Goodnight beautiful 🌸🌙 Distance is quieter at night but love is louder. I hope you feel it right now wrapping around you like a blanket 💛",
+  "Sweet dreams A ✨ I hope your sleep is deep, your dreams are sweet, and tomorrow is even kinder to you than today was 💕🌙",
+  "Goodnight my love 🌙 You did good today. You always do. Now rest. Tomorrow I'll still be here, still loving you the same way 💛",
+  "As you drift to sleep 🌙💕 Know that you are thought of, cherished, and loved beyond any distance. Goodnight from my heart 💛",
+  "Goodnight A 🌸 The stars are out tonight and I like thinking we're both under the same sky, hearts pointed in the same direction 💕🌙",
+  "Sweet dreams my beautiful girl 🌙 Thank you for being you. Thank you for being mine. Sleep well and wake up to more love tomorrow 💛",
+  "Goodnight love ✨🌙 I replay our conversations at night. They make me smile in the dark. You do that to me. Goodnight beautiful 💕",
+  "Sleep well A 🌙 The world is quieter now and all I can think about is how much I love you. Goodnight from the deepest part of my heart 💛",
+  "Goodnight my darling 💕🌙 I hope your dreams take you somewhere wonderful tonight. And if they bring you to me, even better 🥰💛",
+  "Sweet dreams 🌙✨ Another day apart but another day I got to love you. That's not nothing. That's everything. Goodnight A 💕",
+  "As you close your eyes 🌙 Remember you are safe, you are loved, and tomorrow you get to wake up and be your amazing self again 💛",
+  "Goodnight A 🌸🌙 I'll be dreaming of the day when I don't have to say goodnight across a screen. Until then, sweet dreams my love 💕",
+  "Sleep well beautiful 🌙 You carried today with such grace. Now let it go and rest. I'll carry the love while you sleep 💛✨",
+  "Goodnight from me to you 💕🌙 The night is long but my love for you is longer. Sleep tight A. I love you to the stars and back 🌟",
+  "Sweet dreams my love 🌙 On the hardest nights, remember this: somewhere in the world someone thinks you're the most wonderful person alive. That someone is me 💛",
+  "Goodnight A ✨🌙 Today was another day I fell a little more in love with you. I didn't think it was possible. And yet, here we are 💕",
+  "Sleep tight my darling 🌙 I love you not just in the big obvious ways but in all the quiet, middle-of-the-night, can't-stop-smiling ways too 💛",
+  "Goodnight beautiful 💕🌙 I hope tonight you sleep deeply and wake up knowing exactly how loved you are. So very, very loved 🌸",
+  "As the night comes 🌙 I'm sending you warmth, love, and all the good dreams across the miles. Goodnight my favourite person 💛✨",
+  "Sweet dreams A 🌸🌙 Close your eyes and know that while you sleep, you are always in my heart. That never goes away 💕",
+  "Goodnight love 🌙 Another night, same love. Constant, steady, completely yours. Sleep well. I'll be here in the morning 💛",
+  "Goodnight my A ✨🌙 Thank you for existing. Thank you for loving me. Thank you for being the most wonderful reason to smile 💕",
+  "Sleep well darling 🌙 The stars are your nightlights tonight. Know I'm looking at the same sky somewhere and thinking of you 💛🌟",
+  "Goodnight A 💕🌙 I can't wait for the day distance is just a word again. Until then — this is me, loving you from here 🌸",
+  "Sweet dreams my love 🌙 Today, tomorrow, always — you are the most important person in my world. Rest now. Be loved now. Goodnight ✨💛",
+  "Goodnight beautiful A 🌙 As you sleep I hope you dream in gold and warmth and know that across every mile, my love reaches you completely 💕",
+];
+
+// ===== 200 MISS ME MESSAGES =====
+const MISS_ME_MSGS = [
+  "In your eyes I found my home, in your heart I found my love, in your soul I found my everything 💕✨",
+  "Every heartbeat whispers your name. You're not just my love — you're my reason to smile every single day 💗😊",
+  "The hardest part of missing you is that I never really stop. You live in every quiet moment 🌸💛",
+  "Loving you is the easiest thing I've ever done. It requires no effort because you make it effortless 💕",
+  "I fall in love with you a little more every day and I didn't think that was possible anymore 🥰💛",
+  "You are my favourite kind of wonderful 🌸 The kind that makes everything else feel okay simply by existing",
+  "There's this moment right before I see your name on my screen where my whole heart lifts. That's you. That's your effect on me 💕",
+  "Distance taught me something: missing you shows me exactly how full my heart is when you're near 💛✨",
+  "You make ordinary moments feel extraordinary just by being part of them 💕🌸",
+  "My favourite place in the whole world is wherever you are 🌍💛",
+  "I don't want a perfect love. I want you — messy, real, warm, and completely mine 💕",
+  "Some people come into your life and quietly become everything. That's what you did 💛🌸",
+  "I love you in a way that's hard to explain but easy to feel. It's everywhere in me 💕✨",
+  "You are my safe place. My home. My favourite chapter 🏠💛",
+  "When I imagine my future, it always has you in it. Always 💕🌸",
+  "Missing you is a feeling I live inside of. But it's also proof that what we have is real and beautiful 💛",
+  "You've changed what it feels like to be loved. In the most beautiful way 💕",
+  "Every little thing reminds me of you. Songs. Sunsets. The colour gold 💛🌸",
+  "I never knew how much someone could mean to another person until I met you 💕",
+  "You are the answer to questions I didn't know I was asking 💛✨",
+  "Thinking of you doesn't feel like sadness. It feels like warmth. Because you are warmth 🌸💕",
+  "I don't just love you. I admire you. I root for you. I choose you every single time 💛",
+  "You're the person I want to tell everything to, even the boring things 💕🌸",
+  "I love the version of myself I am when I'm with you 💛✨",
+  "You make me braver, softer, better. I don't take that lightly 💕",
+  "Everything feels more beautiful because I get to share it with you 🌸💛",
+  "The best decision I ever made was letting myself love you completely 💕",
+  "I'd choose you. Over and over, in every version of my life. Always you 💛",
+  "You are not just a part of my world — you are the best part of it 💕🌸",
+  "Loving you feels like coming home after a very long journey 🏠💛",
+  "There's nobody I'd rather face the world with than you 💕✨",
+  "You carry my heart so gently. I notice that. I love you for it 💛🌸",
+  "I love who you are when nobody's watching — authentic, warm, and absolutely beautiful 💕",
+  "Being loved by you is the most generous gift I've ever received 💛",
+  "You are so deeply embedded in my heart that there's no version of me without you 💕🌸",
+  "I see you and I think: how did I get this lucky? Every single time 💛✨",
+  "You are the kind of love people write songs about. And you're mine 💕",
+  "I have so many reasons to smile. Most of them have your name on them 💛🌸",
+  "Missing you fills me with gratitude — because it means I found something worth missing 💕",
+  "You've ruined every other kind of love for me. In the best possible way 💛",
+  "The world is loud and complicated but loving you is quiet and simple and perfect 💕🌸",
+  "I love you not just on the good days. I love you through all of it 💛",
+  "You are my peace. My joy. My everything 💕✨",
+  "No matter what happens today, you have someone out here who loves you completely 💛🌸",
+  "Being yours feels like the greatest adventure of my life 💕",
+  "I miss you in a way that feels like a song stuck in my head — constant and beautiful 💛",
+  "You make me feel understood. That is one of the rarest, most precious things 💕🌸",
+  "I fall in love with you in a hundred small ways every single day 💛✨",
+  "You are woven into every good thing in my life 💕",
+  "Wherever you are right now, I hope you can feel how much I love you 💛🌸",
+  "If I could hold your hand right now I would and I wouldn't let go for a very long time 💕",
+  "You are my greatest adventure and my softest landing 💛",
+  "Everything I am is better because of you 💕🌸",
+  "I've never been more certain of anything than I am of loving you 💛✨",
+  "You are the gold in my ordinary days 💕",
+  "Missing you is just love with nowhere to go right now — but it finds its way 💛🌸",
+  "You are the reason I believe in something beautiful 💕",
+  "I want to grow old with you and tell everyone who asks that you were the best choice I ever made 💛",
+  "Some things in life are complicated. Loving you has never been one of them 💕🌸",
+  "You are not perfect and neither am I but together we are perfectly ours 💛✨",
+  "I love you more than distance could ever measure 💕",
+  "You are the thought that makes every other thought better 💛🌸",
+  "I didn't know what forever felt like until I imagined it with you 💕",
+  "You are my constant, my compass, my calm 💛",
+  "The world is a better place with you in it. And my world is the best because you're in mine 💕🌸",
+  "I love you in all the ways — the loud ones and the quiet ones 💛✨",
+  "You are my favourite coincidence — finding you in this vast world 💕",
+  "I look at you and I see my future smiling back at me 💛🌸",
+  "Every moment with you is a moment I'd choose again 💕",
+  "You feel like home to me. That doesn't go away with distance 💛",
+  "Falling for you was the best fall I've ever taken 💕🌸",
+  "I love you with every version of myself — past, present, and future 💛✨",
+  "You are the light that makes everything around you brighter 💕",
+  "I'm so grateful for the accident of fate that brought you into my life 💛🌸",
+  "You are the most beautiful choice I never saw coming 💕",
+  "I carry you with me everywhere — in my laugh, in my warmth, in my hope 💛",
+  "Loving you has taught me things about myself I never knew 💕🌸",
+  "You are my biggest yes, my softest comfort, my deepest love 💛✨",
+  "If missing you is the price of loving you, I'll pay it every single day 💕",
+  "You don't just love me — you make me want to be better. That is everything 💛🌸",
+  "I never want to stop learning you. There's always something new to love 💕",
+  "You are irreplaceable. In every definition of that word 💛",
+  "I love you for who you are, who you're becoming, and who you'll always be 💕🌸",
+  "You are the reason behind so many of my smiles 💛✨",
+  "Distance is just a number. What we have is not 💕",
+  "I love you not just in words. I love you in the way I think of you first 💛🌸",
+  "You are my favourite story — one I never want to stop reading 💕",
+  "The truth is simple: I love you and that doesn't have an end 💛",
+  "You are my dream that I get to live while awake 💕🌸",
+  "I don't need to be next to you to feel close. You live inside my heart 💛✨",
+  "If love were a place, it would look exactly like you 💕",
+  "You are the warmth I carry through the coldest days 💛🌸",
+  "I love you more today than yesterday and less than tomorrow 💕",
+  "There's a version of me before you and a version after — the second one is so much better 💛",
+  "You are my greatest certainty in a world full of uncertainty 💕🌸",
+  "I want to love you so well that you never have to wonder 💛✨",
+  "You are absolutely, completely, entirely worth every mile between us 💕",
+  "I love the way your love changed me. Quietly. Completely 💛🌸",
+  "Being loved by you is the softest thing I've ever known 💕",
+  "You are my every morning wish and every night's last thought 💛",
+  "If I could whisper one thing across the miles it would be: I love you. I love you. I love you 💕🌸",
+  "You have my whole heart. Keep it warm for me 💛✨",
+  "I love you in a way that grows with every passing day. It has no ceiling 💕",
+  "You are one of the best things to ever happen to me. I mean that deeply 💛🌸",
+  "The distance is real but so is this — and this is so much stronger 💕",
+  "I think about the future and smile because you're in it 💛",
+  "You deserve all of it — the love, the warmth, the softness, the joy. All of it 💕🌸",
+  "I don't have the words for how much I love you. So I say it every chance I get hoping it adds up 💛✨",
+  "You are the reason I believe in good things 💕",
+  "Missing you is bittersweet. Sweet because of who you are. Bitter because you're far 💛🌸",
+  "I love you in every language — in silence, in laughter, in distance 💕",
+  "You are my anchor and my wings at the same time 💛",
+  "I look forward to so many things but mostly: you 💕🌸",
+  "You are the gold thread running through everything good in my life 💛✨",
+  "I've loved you in a thousand small ways today alone 💕",
+  "You are proof that some things are worth waiting for, working for, loving through 💛🌸",
+  "My love for you doesn't shrink with distance. It grows 💕",
+  "You are the most genuinely wonderful person I know 💛",
+  "I'd cross every ocean just to sit next to you 💕🌸",
+  "You are my calm in every storm 💛✨",
+  "I love you like the ocean — deep, endless, and always coming back to shore 💕",
+  "You are everything good wrapped up in one person 💛🌸",
+  "I fall in love with you in new ways every single day 💕",
+  "You are my favourite feeling 💛",
+  "There is no distance in love. Love finds a way. It always does 💕🌸",
+  "You are so special to me that words honestly feel small 💛✨",
+  "I love you beyond the reach of words. So I love you in actions and thoughts and wishes instead 💕",
+  "You are the person I most want to share everything with 💛🌸",
+  "Even in missing you I feel lucky — because this feeling proves something real 💕",
+  "You are the melody I didn't know I was waiting to hear 💛",
+  "I am so in love with who you are — every single part 💕🌸",
+  "You bring out the best in me without even trying 💛✨",
+  "The world feels smaller knowing we're in it together 💕",
+  "I love you for your heart. Your warmth. Your soul. All of it 💛🌸",
+  "You are a rare kind of beautiful — inside and out 💕",
+  "I love you loud and I love you quiet. In every version 💛",
+  "You are my most beautiful reason for everything 💕🌸",
+  "I think the universe knew exactly what it was doing when it led me to you 💛✨",
+  "You are more than I could have ever asked for 💕",
+  "I love you so much it sometimes takes me by surprise 💛🌸",
+  "You're the person I want to call first with every big news 💕",
+  "I love you in a way that feels like I've always known you 💛",
+  "You are the kind of love I'll look back on and say: that was the real thing 💕🌸",
+  "Thank you for loving me back. It's the greatest gift 💛✨",
+  "You are worthy of every good thing — please remember that 💕",
+  "I love you not just for what you are but for what I am when I'm with you 💛🌸",
+  "You are beautiful in ways you probably don't even see 💕",
+  "I count the days until we're in the same place again. And smile knowing they're counting down 💛",
+  "You are my greatest adventure 💕🌸",
+  "There isn't a version of love better than what we have 💛✨",
+  "I love you more than missing you hurts. And that's saying everything 💕",
+  "You are the one constant in a world of variables 💛🌸",
+  "You hold my heart so gently. I love you for that more than anything 💕",
+  "I love you in ways that don't need explaining — they just are 💛",
+  "You are so deeply loved right now. Right in this moment 💕🌸",
+  "I'd do it all again — every single step — just to end up loving you 💛✨",
+  "You are the most important person in my world. Full stop 💕",
+  "I want to keep choosing you for the rest of my life 💛🌸",
+  "You are my forever kind of love 💕",
+  "I love everything about you — even the things you're still learning to love about yourself 💛",
+  "You are the best thing that ever happened to me. Without question 💕🌸",
+  "I love you from here to every star above us and back again 💛✨",
+  "You are irreplaceable. Precious. Mine 💕",
+  "I carry your love in my chest like a warm light 💛🌸",
+  "You are my reason for so many things 💕",
+  "I love you — not perfectly, but deeply. Always deeply 💛",
+  "You are the most beautiful soul I've ever known 💕🌸",
+  "I love you now. I'll love you tomorrow. I'll love you always 💛✨",
+  "You are worth every mile, every wait, every moment of this 💕",
+  "I love you with everything I have and everything I am 💛🌸",
+  "You are my light, my love, my everything 💕",
+  "There is nobody else. There will never be anyone else. Only you 💛✨",
+  "You are so deeply, completely, unconditionally loved 💕",
+  "I love you — and that is the truest thing I know 💛🌸",
+  "You are my home. Wherever you are, that's where I want to be 💕",
+  "I love you more than distance, more than time, more than words 💛",
+  "You are everything I've ever wanted and more than I ever imagined 💕🌸",
+  "I love you — simply, completely, always 💛✨",
+  "You are my greatest love story 💕",
+  "I love you to the moon and back doesn't cover it — I love you beyond all that 💛🌸",
+  "You are loved. Right now. More than you know 💕",
+  "I love you — that never changes, that never stops, that never fades 💛",
+  "You are my heart walking around outside my body. That's how much I love you 💕🌸",
+  "I love you in this moment and in every moment to come 💛✨",
+  "You are my A. My whole heart. My love 💕",
+  "I love you. That's it. That's the whole message. That's everything 💛",
+];
+
+// ===== FLOATING BACKGROUND =====
+function initFloating() {
+  const container = document.getElementById('floatingBg');
+  const words = ['Honey','Baby','Cupcake','Babe','Darling','Angel','Wifey','My Love','Precious','Sweetheart','Gorgeous','Beautiful','Love','A 💛 I','A 💛 I','A 💛 I','A 💛 I','Honey Pie','My Heart','My World'];
+  words.forEach((w, i) => {
+    const el = document.createElement('div');
+    el.className = 'float-word';
+    el.textContent = w;
+    el.style.left = `${Math.random()*90}%`;
+    el.style.top = `${Math.random()*100}%`;
+    el.style.fontSize = `${0.8 + Math.random()*1.2}rem`;
+    el.style.animationDuration = `${12 + Math.random()*18}s`;
+    el.style.animationDelay = `${Math.random()*-20}s`;
+    container.appendChild(el);
+  });
+}
+
+// ===== PIN LOGIC =====
+function pinPress(k) {
+  if (k === 'del') { pinBuffer = pinBuffer.slice(0,-1); updateDots(); return; }
+  if (pinBuffer.length >= 4) return;
+  pinBuffer += k;
+  updateDots();
+  if (pinBuffer.length === 4) {
+    setTimeout(checkPin, 200);
+  }
+}
+
+function updateDots() {
+  for (let i=0;i<4;i++) {
+    const d = document.getElementById(`d${i}`);
+    d.className = 'pin-dot' + (i < pinBuffer.length ? ' filled' : '');
+  }
+}
+
+function checkPin() {
+  if (pinBuffer === PIN_ADMIN) {
+    currentUser = 'admin';
+    enterApp();
+  } else if (pinBuffer === PIN_HER) {
+    currentUser = 'her';
+    enterApp();
+  } else {
+    for (let i=0;i<4;i++) document.getElementById(`d${i}`).className='pin-dot error';
+    document.getElementById('pinError').style.display='block';
+    setTimeout(()=>{
+      pinBuffer = '';
+      updateDots();
+      document.getElementById('pinError').style.display='none';
+    }, 1500);
+  }
+}
+
+function enterApp() {
+  document.getElementById('login-screen').classList.add('hidden');
+  document.getElementById('topbar').style.display='flex';
+  document.getElementById('bottomNav').style.display='flex';
+  document.getElementById('roleBadge').textContent = currentUser === 'admin' ? '💙 Admin' : '💗 Her';
+  if (currentUser === 'admin') {
+    document.getElementById('toyBtn').style.display = 'block';
+    document.getElementById('poemFab').style.display = 'flex';
+    document.getElementById('recordSection').style.display = 'block';
+    document.getElementById('memoryAdminBtn').style.display = 'block';
+    document.getElementById('lettersAdminBtn').style.display = 'block';
+    document.getElementById('distanceAdminPanel').style.display = 'block';
+  }
+  showPage('messages');
+  checkSpecialDay();
+  setupTOYListener();
+  loadDistanceData();
+  populateCities();
+  checkTOY();
+}
+
+function lockApp() {
+  currentUser = null;
+  pinBuffer = '';
+  updateDots();
+  document.getElementById('login-screen').classList.remove('hidden');
+  document.getElementById('topbar').style.display='none';
+  document.getElementById('bottomNav').style.display='none';
+  if (toyChannel) { sb.removeChannel(toyChannel); toyChannel = null; }
+  ['messages','poems','distance','more','voice','memory','letters'].forEach(p => {
+    document.getElementById(`page-${p}`).classList.add('hidden');
+  });
+}
+
+// ===== NAVIGATION =====
+function showPage(page) {
+  const pages = ['messages','poems','distance','more','voice','memory','letters'];
+  pages.forEach(p => {
+    document.getElementById(`page-${p}`).classList.add('hidden');
+    const nb = document.getElementById(`nav-${p}`);
+    if (nb) nb.classList.remove('active');
+  });
+  document.getElementById(`page-${page}`).classList.remove('hidden');
+  currentPage = page;
+  const nb = document.getElementById(`nav-${page}`);
+  if (nb) nb.classList.add('active');
+  // Load data for page
+  if (page === 'messages') renderMessages();
+  if (page === 'poems') loadPoems();
+  if (page === 'distance') loadDistanceData();
+  if (page === 'voice') loadVoiceNotes();
+  if (page === 'memory') loadMemories();
+  if (page === 'letters') loadLetters();
+}
+
+function showSubPage(sub) {
+  showPage(sub);
+  // highlight more tab
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('nav-more').classList.add('active');
+}
+
+// ===== MACAU TIME HELPERS =====
+function getMacauNow() {
+  const now = new Date();
+  const utc = now.getTime() + now.getTimezoneOffset()*60000;
+  return new Date(utc + MACAU_OFFSET*3600000);
+}
+
+function getDayIndex() {
+  const m = getMacauNow();
+  const start = new Date(m.getFullYear(), 0, 0);
+  const diff = m - start;
+  return Math.floor(diff / 86400000) % 30;
+}
+
+function getSlotStatus() {
+  const m = getMacauNow();
+  const h = m.getHours(), min = m.getMinutes(), s = m.getSeconds();
+  const morningUnlock = 8*3600, middayUnlock = 13*3600, nightUnlock = 22*3600;
+  const current = h*3600+min*60+s;
+  return {
+    morning: current >= morningUnlock,
+    midday: current >= middayUnlock,
+    night: current >= nightUnlock,
+    morningSeconds: Math.max(0, morningUnlock - current),
+    middaySeconds: Math.max(0, middayUnlock - current),
+    nightSeconds: Math.max(0, nightUnlock - current),
+  };
+}
+
+function formatCountdown(totalSeconds) {
+  if (totalSeconds <= 0) return '00:00:00';
+  const h = Math.floor(totalSeconds/3600).toString().padStart(2,'0');
+  const m = Math.floor((totalSeconds%3600)/60).toString().padStart(2,'0');
+  const s = (totalSeconds%60).toString().padStart(2,'0');
+  return `${h}:${m}:${s}`;
+}
+
+// ===== MESSAGES PAGE =====
+let msgTimer = null;
+function renderMessages() {
+  const idx = getDayIndex();
+  const morning = MORNING_MSGS[idx];
+  const midday = MIDDAY_MSGS[idx];
+  const night = GOODNIGHT_MSGS[idx];
+  const slots = [
+    { key:'morning', icon:'☀️', label:'Good Morning', msg: morning },
+    { key:'midday', icon:'✨', label:'Midday Love', msg: midday },
+    { key:'night', icon:'🌙', label:'Goodnight', msg: night },
+  ];
+  const container = document.getElementById('msgSlots');
+  container.innerHTML = slots.map(s => `
+    <div class="msg-slot" id="slot-${s.key}">
+      <div class="slot-header">
+        <div class="slot-label">${s.icon} ${s.label}</div>
+        <span class="slot-status locked" id="status-${s.key}">🔒 Sealed</span>
+      </div>
+      <div id="content-${s.key}"></div>
+    </div>
+  `).join('');
+  updateSlots();
+  if (msgTimer) clearInterval(msgTimer);
+  msgTimer = setInterval(updateSlots, 1000);
+}
+
+function updateSlots() {
+  const st = getSlotStatus();
+  const idx = getDayIndex();
+  updateSlot('morning', st.morning, st.morningSeconds, MORNING_MSGS[idx]);
+  updateSlot('midday', st.midday, st.middaySeconds, MIDDAY_MSGS[idx]);
+  updateSlot('night', st.night, st.nightSeconds, GOODNIGHT_MSGS[idx]);
+}
+
+function updateSlot(key, unlocked, seconds, msg) {
+  const slot = document.getElementById(`slot-${key}`);
+  const content = document.getElementById(`content-${key}`);
+  const status = document.getElementById(`status-${key}`);
+  if (!slot || !content || !status) return;
+  if (unlocked) {
+    // Only update DOM if not already showing the message (prevents flicker)
+    if (!slot.classList.contains('unlocked')) {
+      slot.classList.add('unlocked');
+      status.className = 'slot-status open'; status.textContent = '✦ Open';
+      content.innerHTML = `<div class="slot-message">"${msg}"</div>`;
+    }
+  } else {
+    slot.classList.remove('unlocked');
+    status.className = 'slot-status locked'; status.textContent = '🔒 Sealed';
+    // Only update the countdown number, not the whole structure
+    const existing = content.querySelector('.slot-countdown');
+    if (existing) {
+      existing.textContent = formatCountdown(seconds);
+    } else {
+      content.innerHTML = `
+        <div class="slot-locked">⏳ Waiting for you...</div>
+        <div class="slot-countdown">${formatCountdown(seconds)}</div>
+      `;
+    }
+  }
+}
+
+// ===== MISS ME =====
+function showMissMe() {
+  let shown = JSON.parse(localStorage.getItem('shownMissMeMsgs') || '[]');
+  let pool = MISS_ME_MSGS.filter((_,i) => !shown.includes(i));
+  if (pool.length === 0) {
+    localStorage.removeItem('shownMissMeMsgs');
+    shown = []; pool = MISS_ME_MSGS;
+  }
+  const available = MISS_ME_MSGS.map((m,i)=>i).filter(i=>!shown.includes(i));
+  const pick = available[Math.floor(Math.random()*available.length)];
+  shown.push(pick);
+  localStorage.setItem('shownMissMeMsgs', JSON.stringify(shown));
+  const card = document.getElementById('missMsgCard');
+  document.getElementById('missMsgText').textContent = MISS_ME_MSGS[pick];
+  card.classList.remove('show');
+  void card.offsetWidth;
+  card.classList.add('show');
+}
+
+// ===== THINKING OF YOU =====
+async function sendTOY() {
+  await sb.from('signals').insert({ type: 'thinking_of_you', seen: false });
+  document.getElementById('toySent').style.display = 'block';
+  setTimeout(() => document.getElementById('toySent').style.display='none', 3000);
+  showToast('💕 Sent to her heart');
+}
+
+async function checkTOY() {
+  if (currentUser !== 'her') return;
+  const { data } = await sb.from('signals').select('*').eq('type','thinking_of_you').eq('seen',false).order('created_at',{ascending:false}).limit(1);
+  if (data && data.length > 0) {
+    document.getElementById('toyIndicator').classList.add('show');
+  }
+}
+
+async function seeTOY() {
+  const { data } = await sb.from('signals').select('*').eq('type','thinking_of_you').eq('seen',false);
+  if (data && data.length > 0) {
+    const ts = new Date(data[0].created_at);
+    showToast(`💕 He was thinking of you at ${ts.toLocaleTimeString()}`);
+    await sb.from('signals').update({seen:true}).eq('type','thinking_of_you').eq('seen',false);
+    document.getElementById('toyIndicator').classList.remove('show');
+  }
+}
+
+function setupTOYListener() {
+  if (currentUser !== 'her') return;
+  toyChannel = sb.channel('signals').on('postgres_changes',{event:'INSERT',schema:'public',table:'signals'},(payload)=>{
+    if (payload.new.type === 'thinking_of_you' && !payload.new.seen) {
+      document.getElementById('toyIndicator').classList.add('show');
+    }
+  }).subscribe();
+}
+
+// ===== SPECIAL DAYS =====
+function checkSpecialDay() {
+  const now = getMacauNow();
+  const mmdd = String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
+  const match = SPECIAL_DAYS.find(d => d.date === mmdd);
+  if (match) {
+    const banner = document.getElementById('specialBanner');
+    document.getElementById('specialIcon').textContent = match.type === 'birthday' ? '🎂' : '💕';
+    document.getElementById('specialTitle').textContent = match.label;
+    document.getElementById('specialSub').textContent = match.type === 'birthday' ? 'Happy Birthday, my love! You make every day magical 🎉' : 'Today marks another chapter of us 💕';
+    banner.classList.add('show');
+    launchConfetti();
+  }
+}
+
+function launchConfetti() {
+  const colors = ['#C9A961','#FF85A1','#FFD700','#FF6B6B','#FFF8DC'];
+  for (let i=0;i<50;i++) {
+    setTimeout(()=>{
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.style.left = `${Math.random()*100}%`;
+      el.style.background = colors[Math.floor(Math.random()*colors.length)];
+      el.style.animationDelay = `${Math.random()*2}s`;
+      el.style.width = el.style.height = `${6+Math.random()*8}px`;
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(), 4000);
+    }, i*50);
+  }
+}
+
+// ===== POEMS =====
+async function loadPoems() {
+  const container = document.getElementById('poemsContainer');
+  container.innerHTML = '<div class="loading">Loading poems... 🌸</div>';
+  const { data, error } = await sb.from('poems').select('*').order('created_at',{ascending:false});
+  if (error) { container.innerHTML = '<div class="empty">Could not load poems 😔</div>'; return; }
+  if (!data || data.length === 0) {
+    container.innerHTML = '<div class="empty">No poems yet...<br>Write something beautiful for her ✍️</div>';
+    return;
+  }
+  const decos = { parchment:'📜', roses:'🌹', stars:'✨', gold:'💛', blossom:'🌸', ink:'🖋️' };
+  container.innerHTML = data.map(p => `
+    <div class="poem-card style-${p.background_style || 'parchment'}">
+      <div class="poem-deco">${decos[p.background_style]||'💕'}</div>
+      ${currentUser==='admin'?`<button class="del-btn" onclick="deletePoem('${p.id}')">✕</button>`:''}
+      <div class="poem-text">${escHtml(p.poem_text)}</div>
+      <div class="poem-footer">
+        Written on ${new Date(p.date_written||p.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})} 💕
+        <div class="poem-sig">With all my love, I ✨</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openPoemModal() { document.getElementById('poemModal').classList.remove('hidden'); }
+function closePoemModal() { document.getElementById('poemModal').classList.add('hidden'); document.getElementById('poemText').value=''; }
+
+function selectStyle(el) {
+  document.querySelectorAll('.style-swatch').forEach(s=>s.classList.remove('sel'));
+  el.classList.add('sel');
+  selectedPoemStyle = el.dataset.style;
+}
+
+async function savePoem() {
+  const text = document.getElementById('poemText').value.trim();
+  if (!text) { showToast('Write something first 💕'); return; }
+  const { error } = await sb.from('poems').insert({
+    poem_text: text,
+    background_style: selectedPoemStyle,
+    date_written: getMacauNow().toISOString().split('T')[0],
+  });
+  if (error) { showToast('Error saving poem 😔'); return; }
+  closePoemModal();
+  loadPoems();
+  showToast('Poem published 💕');
+}
+
+async function deletePoem(id) {
+  await sb.from('poems').delete().eq('id',id);
+  loadPoems();
+}
+
+// ===== DISTANCE =====
+function populateCities() {
+  const sel = document.getElementById('citySelect');
+  CITIES.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.name; opt.textContent = `${c.country} - ${c.name}`;
+    sel.appendChild(opt);
+  });
+}
+
+async function saveCity() {
+  const cityName = document.getElementById('citySelect').value;
+  if (!cityName) return;
+  const city = CITIES.find(c=>c.name===cityName);
+  if (!city) return;
+  const uid = currentUser === 'admin' ? 'admin' : 'her';
+  await sb.from('locations').upsert({
+    id: uid, city: city.name, country: city.country,
+    flag: city.country.split(' ')[0], updated_at: new Date().toISOString()
+  });
+  loadDistanceData();
+}
+
+async function loadDistanceData() {
+  const { data } = await sb.from('locations').select('*');
+  const adminLoc = data?.find(d=>d.id==='admin');
+  const herLoc = data?.find(d=>d.id==='her');
+
+  if (adminLoc) {
+    document.getElementById('countryI').textContent = adminLoc.country || '—';
+    const city = CITIES.find(c=>c.name===adminLoc.city);
+    if (city) document.getElementById('citySelect').value = adminLoc.city;
+  }
+  if (herLoc) {
+    document.getElementById('countryA').textContent = herLoc.country || '—';
+  }
+
+  if (adminLoc && herLoc) {
+    const cityA = CITIES.find(c=>c.name===adminLoc.city);
+    const cityB = CITIES.find(c=>c.name===herLoc.city);
+    if (cityA && cityB) {
+      const dist = haversine(cityA.lat, cityA.lon, cityB.lat, cityB.lon);
+      document.getElementById('distanceNum').textContent = dist.toLocaleString();
+      const quotes = [
+        '"Distance means so little when you mean so much" 💖',
+        '"No matter how far, my heart finds its way to you" 💕',
+        '"Together in heart, one day in person" 💛',
+        '"Love knows no distance" 🌍💕',
+      ];
+      document.getElementById('distanceQuote').textContent = quotes[Math.floor(Math.random()*quotes.length)];
+    }
+  }
+
+  // Load avatars
+  const { data: profiles } = await sb.from('profiles').select('*');
+  const adminProfile = profiles?.find(p=>p.id==='admin');
+  const herProfile = profiles?.find(p=>p.id==='her');
+  if (adminProfile?.photo_url) {
+    document.getElementById('avatarI').innerHTML = `<img src="${adminProfile.photo_url}" alt="I">`;
+  }
+  if (herProfile?.photo_url) {
+    document.getElementById('avatarA').innerHTML = `<img src="${herProfile.photo_url}" alt="A">`;
+  }
+
+  // Load distance dates
+  const lastMet = localStorage.getItem('lastMetDate');
+  const nextMeetDate = localStorage.getItem('nextMeetDate');
+  if (lastMet) {
+    document.getElementById('lastMetInput').value = lastMet;
+    const days = Math.floor((new Date() - new Date(lastMet)) / 86400000);
+    document.getElementById('daysApart').textContent = `${days} days 💛`;
+  } else {
+    document.getElementById('daysApart').textContent = 'Set date ⚙️';
+  }
+  updateClocks();
+}
+
+function saveDistanceDates() {
+  const lm = document.getElementById('lastMetInput').value;
+  if (lm) localStorage.setItem('lastMetDate', lm);
+  loadDistanceData();
+}
+
+function haversine(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = (lat2-lat1)*Math.PI/180;
+  const dLon = (lon2-lon1)*Math.PI/180;
+  const a = Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
+  return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+}
+
+function updateClocks() {
+  // Update every minute
+  const adminCity = CITIES.find(c=>c.name===document.getElementById('citySelect').value);
+  // Show Macau time for admin, her city time for her
+  const macauTime = getMacauNow().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('timeI').textContent = macauTime + ' (MO)';
+  // Her time - try to get from her city
+  const herCityName = document.getElementById('countryA').textContent;
+  const herCity = CITIES.find(c=>c.country===herCityName);
+  if (herCity) {
+    try {
+      const herTime = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',timeZone:herCity.tz});
+      document.getElementById('timeA').textContent = herTime;
+    } catch(e) { document.getElementById('timeA').textContent = '—'; }
+  }
+}
+setInterval(updateClocks, 60000);
+
+// ===== AVATAR UPLOAD =====
+let uploadingFor = null;
+function uploadAvatar(who) {
+  if (who === 'admin' && currentUser !== 'admin') return;
+  if (who === 'her' && currentUser !== 'her') return;
+  uploadingFor = who;
+  document.getElementById('avatarFileInput').click();
+}
+
+async function handleAvatarUpload(e) {
+  const file = e.target.files[0]; if (!file) return;
+  showToast('Uploading...');
+  const filename = `avatar-${uploadingFor}-${Date.now()}.${file.name.split('.').pop()}`;
+  const { data, error } = await sb.storage.from('media').upload(filename, file, {upsert:true});
+  if (error) { showToast('Upload failed 😔'); return; }
+  const { data: urlData } = sb.storage.from('media').getPublicUrl(filename);
+  await sb.from('profiles').upsert({ id: uploadingFor, photo_url: urlData.publicUrl });
+  loadDistanceData();
+  showToast('Photo updated 💕');
+  e.target.value = '';
+}
+
+function triggerTogether() {
+  if (currentUser !== 'admin') return;
+  const overlay = document.getElementById('together-overlay');
+  overlay.classList.remove('hidden');
+  launchConfetti();
+  setTimeout(() => overlay.classList.add('hidden'), 8000);
+}
+
+// ===== VOICE NOTES =====
+async function loadVoiceNotes() {
+  const container = document.getElementById('voiceNotesContainer');
+  container.innerHTML = '<div class="loading">Loading...</div>';
+  const { data, error } = await sb.from('voice_notes').select('*').order('created_at',{ascending:false});
+  if (error || !data || data.length === 0) {
+    container.innerHTML = '<div class="empty">No voice notes yet...<br>Record something for her 🎙️</div>';
+    return;
+  }
+  container.innerHTML = data.map(v => `
+    <div class="voice-card ${!v.is_played && currentUser==='her' ? 'unplayed' : ''}">
+      <div class="voice-header">
+        <div class="voice-title">${escHtml(v.title || 'Voice Note')}</div>
+        ${!v.is_played && currentUser==='her' ? '<span class="new-badge">🔴 New</span>' : ''}
+        ${currentUser==='admin' ? `<button class="del-btn" onclick="deleteVoiceNote('${v.id}')">✕</button>` : ''}
+      </div>
+      <div class="voice-meta">${new Date(v.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})} · ${formatDur(v.duration||0)}</div>
+      <button class="play-btn" onclick="playVoiceNote('${v.audio_url}','${v.id}')">
+        ▶ Play
+        <div class="waveform" id="wf-${v.id}" style="display:none">
+          ${[8,12,16,10,14].map(h=>`<div class="wave-bar" style="height:${h}px"></div>`).join('')}
+        </div>
+      </button>
+    </div>
+  `).join('');
+}
+
+function formatDur(s) {
+  return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+}
+
+let currentAudio = null;
+async function playVoiceNote(url, id) {
+  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+  currentAudio = new Audio(url);
+  currentAudio.play();
+  document.getElementById(`wf-${id}`).style.display='flex';
+  currentAudio.onended = () => { document.getElementById(`wf-${id}`).style.display='none'; };
+  if (currentUser === 'her') {
+    await sb.from('voice_notes').update({is_played:true}).eq('id',id);
+  }
+}
+
+async function deleteVoiceNote(id) {
+  await sb.from('voice_notes').delete().eq('id',id);
+  loadVoiceNotes();
+}
+
+// Recording
+async function toggleRecord() {
+  const btn = document.getElementById('recordBtn');
+  if (!mediaRecorder || mediaRecorder.state === 'inactive') {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+      audioChunks = [];
+      mediaRecorder = new MediaRecorder(stream);
+      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+      mediaRecorder.onstop = () => {
+        audioBlob = new Blob(audioChunks, {type:'audio/webm'});
+        document.getElementById('recordingControls').style.display='block';
+        stream.getTracks().forEach(t=>t.stop());
+      };
+      mediaRecorder.start();
+      btn.classList.add('recording'); btn.textContent='⏹️';
+      recordSeconds = 0;
+      recordInterval = setInterval(()=>{
+        recordSeconds++;
+        document.getElementById('recordTimer').textContent = formatDur(recordSeconds);
+        if (recordSeconds >= 60) toggleRecord();
+      },1000);
+    } catch(e) { showToast('Microphone not available 😔'); }
+  } else {
+    mediaRecorder.stop();
+    clearInterval(recordInterval);
+    btn.classList.remove('recording'); btn.textContent='🎙️';
+  }
+}
+
+async function saveVoiceNote() {
+  if (!audioBlob) { showToast('Record something first 🎙️'); return; }
+  const title = document.getElementById('noteTitle').value.trim() || 'Voice Note';
+  showToast('Uploading...');
+  const filename = `voice-${Date.now()}.webm`;
+  const { error } = await sb.storage.from('media').upload(filename, audioBlob);
+  if (error) { showToast('Upload failed 😔'); return; }
+  const { data: urlData } = sb.storage.from('media').getPublicUrl(filename);
+  await sb.from('voice_notes').insert({
+    title, audio_url: urlData.publicUrl, duration: recordSeconds, is_played: false
+  });
+  document.getElementById('recordingControls').style.display='none';
+  document.getElementById('noteTitle').value='';
+  document.getElementById('recordTimer').textContent='0:00';
+  audioBlob = null; recordSeconds = 0;
+  loadVoiceNotes();
+  showToast('Voice note sent 💕');
+}
+
+// ===== MEMORY WALL =====
+async function loadMemories() {
+  const grid = document.getElementById('memoryGrid');
+  const { data, error } = await sb.from('memories').select('*').order('created_at',{ascending:false});
+  if (error || !data || data.length === 0) {
+    grid.innerHTML = '<div class="empty" style="grid-column:span 2">No memories yet...<br>Add your first one 📸</div>';
+    return;
+  }
+  grid.innerHTML = data.map(m => `
+    <div class="memory-item" onclick="openLightbox('${m.photo_url}','${escHtml(m.caption||'')}')">
+      <img class="memory-photo" src="${m.photo_url}" alt="memory" loading="lazy">
+      <div class="memory-caption">
+        ${escHtml(m.caption||'')}
+        <div class="memory-date">${new Date(m.created_at).toLocaleDateString('en-GB')}</div>
+      </div>
+    </div>
+  `).join('');
+  if (currentUser==='admin') {
+    grid.innerHTML += '';
+  }
+}
+
+async function handleMemoryUpload(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const caption = prompt('Add a caption for this memory 💕') || '';
+  showToast('Uploading memory...');
+  const filename = `memory-${Date.now()}.${file.name.split('.').pop()}`;
+  const { error } = await sb.storage.from('media').upload(filename, file);
+  if (error) { showToast('Upload failed 😔'); return; }
+  const { data: urlData } = sb.storage.from('media').getPublicUrl(filename);
+  await sb.from('memories').insert({ photo_url: urlData.publicUrl, caption });
+  loadMemories();
+  showToast('Memory added 💕');
+  e.target.value = '';
+}
+
+function openLightbox(url, caption) {
+  document.getElementById('lightboxImg').src = url;
+  document.getElementById('lightboxCaption').textContent = caption;
+  document.getElementById('lightbox').classList.remove('hidden');
+}
+function closeLightbox() { document.getElementById('lightbox').classList.add('hidden'); }
+
+// ===== LETTERS =====
+async function loadLetters() {
+  const container = document.getElementById('lettersContainer');
+  container.innerHTML = '<div class="loading">Loading...</div>';
+  const { data, error } = await sb.from('letters').select('*').order('created_at',{ascending:false});
+  if (error || !data || data.length === 0) {
+    container.innerHTML = '<div class="empty">No letters yet...<br>Write her something from the heart 💌</div>';
+    return;
+  }
+  container.innerHTML = data.map(l => {
+    if (l.is_sealed && currentUser === 'her') {
+      return `<div class="letter-card sealed">
+        <div class="letter-envelope">💌</div>
+        <div class="letter-sealed-text">"Not yet... but soon" 🔒</div>
+        <div class="letter-meta">${new Date(l.created_at).toLocaleDateString('en-GB')}</div>
+      </div>`;
+    }
+    return `<div class="letter-card" onclick="openLetter('${l.id}')">
+      ${currentUser==='admin'?`<button class="del-btn" onclick="event.stopPropagation();deleteLetter('${l.id}')">✕</button>`:''}
+      <div class="letter-title">${escHtml(l.title||'A Letter For You')}</div>
+      <div class="letter-preview">${escHtml(l.content||'')}</div>
+      <div class="letter-meta">
+        ${new Date(l.created_at).toLocaleDateString('en-GB')} · ${l.is_sealed ? '🔒 Sealed' : '💌 Open'}
+        ${currentUser==='admin' ? `<button class="seal-btn" onclick="event.stopPropagation();toggleSeal('${l.id}',${l.is_sealed})">${l.is_sealed?'Unseal':'Seal'}</button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+let allLetters = [];
+async function openLetter(id) {
+  const { data } = await sb.from('letters').select('*').eq('id',id).single();
+  if (!data || (data.is_sealed && currentUser==='her')) return;
+  document.getElementById('lfTitle').textContent = data.title || 'A Letter For You';
+  document.getElementById('lfDate').textContent = new Date(data.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('lfBody').textContent = data.content || '';
+  document.getElementById('letterFullView').classList.remove('hidden');
+}
+
+function closeLetter() { document.getElementById('letterFullView').classList.add('hidden'); }
+
+function openLetterModal() { document.getElementById('letterModal').classList.remove('hidden'); }
+function closeLetterModal() { document.getElementById('letterModal').classList.add('hidden'); }
+
+async function saveLetter() {
+  const title = document.getElementById('letterTitle').value.trim();
+  const content = document.getElementById('letterBody').value.trim();
+  const isSealed = document.getElementById('letterSealed').value === 'true';
+  if (!content) { showToast('Write something first 💌'); return; }
+  await sb.from('letters').insert({ title, content, is_sealed: isSealed });
+  closeLetterModal();
+  loadLetters();
+  showToast('Letter saved 💕');
+  document.getElementById('letterTitle').value='';
+  document.getElementById('letterBody').value='';
+}
+
+async function deleteLetter(id) {
+  await sb.from('letters').delete().eq('id',id);
+  loadLetters();
+}
+
+async function toggleSeal(id, currentSealed) {
+  await sb.from('letters').update({is_sealed: !currentSealed}).eq('id',id);
+  loadLetters();
+  showToast(currentSealed ? 'Letter unsealed 💌' : 'Letter sealed 🔒');
+}
+
+// ===== UTILS =====
+function showToast(msg) {
+  const existing = document.querySelector('.toast');
+  if (existing) existing.remove();
+  const t = document.createElement('div');
+  t.className = 'toast'; t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 2500);
+}
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ===== PWA =====
+const manifest = {
+  name: 'Sweet Embrace Daily',
+  short_name: 'Sweet Embrace',
+  start_url: '.',
+  display: 'standalone',
+  theme_color: '#C9A961',
+  background_color: '#120a04',
+  icons:[{src:'https://fav.farm/💛',sizes:'192x192',type:'image/png'}]
+};
+const blob = new Blob([JSON.stringify(manifest)],{type:'application/json'});
+const manifestURL = URL.createObjectURL(blob);
+const link = document.createElement('link');
+link.rel='manifest'; link.href=manifestURL;
+document.head.appendChild(link);
+
+// ===== INIT =====
+initFloating();
+</script>
+</body>
+</html>
