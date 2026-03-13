@@ -961,7 +961,7 @@ input[type=file] { display: none; }
     </div>
     <button class="miss-me-btn" onclick="showMissMe()">💕 When You Miss Me...</button>
     <button class="toy-btn" id="toyBtn" onclick="sendTOY()" style="display:none">🔴 I'm thinking of you right now</button>
-    <div class="toy-sent" id="toySent" style="display:none">💕 She'll feel it...</div>
+    <div class="toy-sent" id="toySent" style="display:none">💕 They'll feel it...</div>
   </div>
 
   <div class="page hidden" id="page-poems">
@@ -994,9 +994,14 @@ input[type=file] { display: none; }
     <input type="file" id="avatarFileInput" accept="image/*" onchange="handleAvatarUpload(event)">
     <div class="card" style="margin-bottom:14px">
       <div class="card-tag">📍 Update Location</div>
-      <div class="city-row">
-        <select id="citySelect" onchange="saveCity()">
-          <option value="">Choose your city...</option>
+      <div class="city-row" style="flex-direction:column;gap:8px">
+        <label style="font-size:0.75rem;color:var(--text-dim)">His city (I 💙)</label>
+        <select id="citySelectAdmin" onchange="saveCity('admin')">
+          <option value="">Choose his city...</option>
+        </select>
+        <label style="font-size:0.75rem;color:var(--text-dim);margin-top:4px">Her city (A 💗)</label>
+        <select id="citySelectHer" onchange="saveCity('her')">
+          <option value="">Choose her city...</option>
         </select>
       </div>
     </div>
@@ -1062,14 +1067,14 @@ input[type=file] { display: none; }
     <div class="section-header">
       <div class="section-title">Voice Notes 🎙️</div>
     </div>
-    <div id="recordSection" style="display:none">
+    <div id="recordSection">
       <div class="record-section">
-        <div class="record-title">Record for her 🎤</div>
+        <div class="record-title" id="recordTitle">Record a voice note 🎤</div>
         <div class="record-btn" id="recordBtn" onclick="toggleRecord()">🎙️</div>
         <div class="record-timer" id="recordTimer">0:00</div>
         <div class="record-hint">Tap to start recording</div>
         <div id="recordingControls" style="display:none;margin-top:14px">
-          <input type="text" id="noteTitle" placeholder="Give it a title..." style="margin-bottom:10px">
+          <input type="text" id="noteTitle" placeholder="Give it a title......" style="margin-bottom:10px">
           <button class="btn-primary" onclick="saveVoiceNote()">Save & Send 💕</button>
         </div>
       </div>
@@ -1094,7 +1099,7 @@ input[type=file] { display: none; }
     <div class="section-header">
       <div class="section-title">Unsent Letters 💌</div>
     </div>
-    <div id="lettersAdminBtn" style="display:none;margin-bottom:14px">
+    <div style="margin-bottom:14px">
       <button class="btn-primary" onclick="openLetterModal()">Write a Letter ✍️</button>
     </div>
     <div id="lettersContainer"><div class="loading">Loading...</div></div>
@@ -1163,7 +1168,7 @@ input[type=file] { display: none; }
     <div class="letter-full-title" id="lfTitle"></div>
     <div class="letter-full-date" id="lfDate"></div>
     <div class="letter-full-body" id="lfBody"></div>
-    <div class="letter-full-sig">With all my love, I 💛</div>
+    <div class="letter-full-sig" id="letterFullSig">With all my love, I 💛</div>
   </div>
 
   <!-- Together Overlay -->
@@ -2233,14 +2238,14 @@ function enterApp() {
   document.getElementById('topbar').style.display='flex';
   document.getElementById('bottomNav').style.display='flex';
   document.getElementById('roleBadge').textContent = currentUser === 'admin' ? '💙 Admin' : '💗 Her';
+  document.getElementById('toyBtn').style.display = 'block';
   if (currentUser === 'admin') {
-    document.getElementById('toyBtn').style.display = 'block';
     document.getElementById('poemFab').style.display = 'flex';
-    document.getElementById('recordSection').style.display = 'block';
     document.getElementById('memoryAdminBtn').style.display = 'block';
-    document.getElementById('lettersAdminBtn').style.display = 'block';
     document.getElementById('distanceAdminPanel').style.display = 'block';
   }
+  // Update record title based on user
+  document.getElementById('recordTitle').textContent = currentUser === 'admin' ? 'Record for her 🎤' : 'Record for him 🎤';
   showPage('messages');
   checkSpecialDay();
   setupTOYListener();
@@ -2411,37 +2416,29 @@ function showMissMe() {
 }
 
 // ===== THINKING OF YOU =====
-const OS_APP_ID = "21e9c5b7-faf1-4e8e-870c-3b1149948bb0";
-const OS_API_KEY = "os_v2_app_ehu4ln726fhi5bymhmiutfelwbsmpicepekukoeblwkkfrpiax5h5jk4qz2vuwltgunyeucwd5zk7afjhzvulqiwj7o33lyg5of3bla";
+async function sendPushNotification(title, message) {
+  try {
+    await fetch("https://lvmvyghhnrjtiqqzteea.supabase.co/functions/v1/send-notification", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title, message })
+    });
+  } catch(e) { console.log('Push error:', e); }
+}
 
 async function sendTOY() {
-  await sb.from('signals').insert({ type: 'thinking_of_you', seen: false });
+  const sender = currentUser;
+  await sb.from('signals').insert({ type: 'thinking_of_you', seen: false, sender });
   document.getElementById('toySent').style.display = 'block';
   setTimeout(() => document.getElementById('toySent').style.display='none', 3000);
-  showToast('💕 Sent to her heart');
-  // Send push notification to all subscribers
-  try {
-    await fetch("https://api.onesignal.com/notifications", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Key ${OS_API_KEY}`
-      },
-      body: JSON.stringify({
-        app_id: OS_APP_ID,
-        included_segments: ["All"],
-        headings: { en: "Sweet Embrace 💛" },
-        contents: { en: "He's thinking of you right now 💕" },
-        url: "https://ismailulhaq9261-blip.github.io/sweet-embrace"
-      })
-    });
-  } catch(e) { console.log('Push notification error:', e); }
+  showToast('💕 Sent to their heart');
+  const msg = sender === 'admin' ? "He's thinking of you right now 💕" : "She's thinking of you right now 💕";
+  await sendPushNotification('Sweet Embrace 💛', msg);
 }
 
 async function checkTOY() {
-  if (currentUser !== 'her') return;
   const { data } = await sb.from('signals').select('*').eq('type','thinking_of_you').eq('seen',false).order('created_at',{ascending:false}).limit(1);
-  if (data && data.length > 0) {
+  if (data && data.length > 0 && data[0].sender !== currentUser) {
     document.getElementById('toyIndicator').classList.add('show');
   }
 }
@@ -2449,17 +2446,19 @@ async function checkTOY() {
 async function seeTOY() {
   const { data } = await sb.from('signals').select('*').eq('type','thinking_of_you').eq('seen',false);
   if (data && data.length > 0) {
-    const ts = new Date(data[0].created_at);
-    showToast(`💕 He was thinking of you at ${ts.toLocaleTimeString()}`);
+    const latest = data.find(d => d.sender !== currentUser);
+    if (!latest) return;
+    const ts = new Date(latest.created_at);
+    const who = latest.sender === 'admin' ? 'He' : 'She';
+    showToast(`💕 ${who} was thinking of you at ${ts.toLocaleTimeString()}`);
     await sb.from('signals').update({seen:true}).eq('type','thinking_of_you').eq('seen',false);
     document.getElementById('toyIndicator').classList.remove('show');
   }
 }
 
 function setupTOYListener() {
-  if (currentUser !== 'her') return;
   toyChannel = sb.channel('signals').on('postgres_changes',{event:'INSERT',schema:'public',table:'signals'},(payload)=>{
-    if (payload.new.type === 'thinking_of_you' && !payload.new.seen) {
+    if (payload.new.type === 'thinking_of_you' && !payload.new.seen && payload.new.sender !== currentUser) {
       document.getElementById('toyIndicator').classList.add('show');
     }
   }).subscribe();
@@ -2550,22 +2549,25 @@ async function deletePoem(id) {
 
 // ===== DISTANCE =====
 function populateCities() {
-  const sel = document.getElementById('citySelect');
-  CITIES.forEach(c => {
-    const opt = document.createElement('option');
-    opt.value = c.name; opt.textContent = `${c.country} - ${c.name}`;
-    sel.appendChild(opt);
+  ['citySelectAdmin','citySelectHer'].forEach(id => {
+    const sel = document.getElementById(id);
+    if (sel.options.length > 1) return;
+    CITIES.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.name; opt.textContent = `${c.country} - ${c.name}`;
+      sel.appendChild(opt);
+    });
   });
 }
 
-async function saveCity() {
-  const cityName = document.getElementById('citySelect').value;
+async function saveCity(who) {
+  const selId = who === 'admin' ? 'citySelectAdmin' : 'citySelectHer';
+  const cityName = document.getElementById(selId).value;
   if (!cityName) return;
   const city = CITIES.find(c=>c.name===cityName);
   if (!city) return;
-  const uid = currentUser === 'admin' ? 'admin' : 'her';
   await sb.from('locations').upsert({
-    id: uid, city: city.name, country: city.country,
+    id: who, city: city.name, country: city.country,
     flag: city.country.split(' ')[0], updated_at: new Date().toISOString()
   });
   loadDistanceData();
@@ -2578,11 +2580,11 @@ async function loadDistanceData() {
 
   if (adminLoc) {
     document.getElementById('countryI').textContent = adminLoc.country || '—';
-    const city = CITIES.find(c=>c.name===adminLoc.city);
-    if (city) document.getElementById('citySelect').value = adminLoc.city;
+    document.getElementById('citySelectAdmin').value = adminLoc.city || '';
   }
   if (herLoc) {
     document.getElementById('countryA').textContent = herLoc.country || '—';
+    document.getElementById('citySelectHer').value = herLoc.city || '';
   }
 
   if (adminLoc && herLoc) {
@@ -2640,22 +2642,22 @@ function haversine(lat1, lon1, lat2, lon2) {
 }
 
 function updateClocks() {
-  // Update every minute
-  const adminCity = CITIES.find(c=>c.name===document.getElementById('citySelect').value);
-  // Show Macau time for admin, her city time for her
-  const macauTime = getMacauNow().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-  document.getElementById('timeI').textContent = macauTime + ' (MO)';
-  // Her time - try to get from her city
-  const herCityName = document.getElementById('countryA').textContent;
-  const herCity = CITIES.find(c=>c.country===herCityName);
+  const adminCityName = document.getElementById('citySelectAdmin').value;
+  const herCityName = document.getElementById('citySelectHer').value;
+  const adminCity = CITIES.find(c=>c.name===adminCityName);
+  const herCity = CITIES.find(c=>c.name===herCityName);
+  if (adminCity) {
+    try {
+      document.getElementById('timeI').textContent = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',timeZone:adminCity.tz});
+    } catch(e) { document.getElementById('timeI').textContent = '—'; }
+  }
   if (herCity) {
     try {
-      const herTime = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',timeZone:herCity.tz});
-      document.getElementById('timeA').textContent = herTime;
+      document.getElementById('timeA').textContent = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',timeZone:herCity.tz});
     } catch(e) { document.getElementById('timeA').textContent = '—'; }
   }
 }
-setInterval(updateClocks, 60000);
+setInterval(updateClocks, 30000);
 
 // ===== AVATAR UPLOAD =====
 let uploadingFor = null;
@@ -2697,14 +2699,14 @@ async function loadVoiceNotes() {
     return;
   }
   container.innerHTML = data.map(v => `
-    <div class="voice-card ${!v.is_played && currentUser==='her' ? 'unplayed' : ''}">
+    <div class="voice-card ${!v.is_played && v.sender !== currentUser ? 'unplayed' : ''}">
       <div class="voice-header">
         <div class="voice-title">${escHtml(v.title || 'Voice Note')}</div>
-        ${!v.is_played && currentUser==='her' ? '<span class="new-badge">🔴 New</span>' : ''}
-        ${currentUser==='admin' ? `<button class="del-btn" onclick="deleteVoiceNote('${v.id}')">✕</button>` : ''}
+        ${!v.is_played && v.sender !== currentUser ? '<span class="new-badge">🔴 New</span>' : ''}
+        ${v.sender === currentUser ? `<button class="del-btn" onclick="deleteVoiceNote('${v.id}')">✕</button>` : ''}
       </div>
-      <div class="voice-meta">${new Date(v.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})} · ${formatDur(v.duration||0)}</div>
-      <button class="play-btn" onclick="playVoiceNote('${v.audio_url}','${v.id}')">
+      <div class="voice-meta">${v.sender === 'admin' ? '💙 From I' : '💗 From A'} · ${new Date(v.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})} · ${formatDur(v.duration||0)}</div>
+      <button class="play-btn" onclick="playVoiceNote('${v.audio_url}','${v.id}','${v.sender}')">
         ▶ Play
         <div class="waveform" id="wf-${v.id}" style="display:none">
           ${[8,12,16,10,14].map(h=>`<div class="wave-bar" style="height:${h}px"></div>`).join('')}
@@ -2719,13 +2721,13 @@ function formatDur(s) {
 }
 
 let currentAudio = null;
-async function playVoiceNote(url, id) {
+async function playVoiceNote(url, id, sender) {
   if (currentAudio) { currentAudio.pause(); currentAudio = null; }
   currentAudio = new Audio(url);
   currentAudio.play();
   document.getElementById(`wf-${id}`).style.display='flex';
   currentAudio.onended = () => { document.getElementById(`wf-${id}`).style.display='none'; };
-  if (currentUser === 'her') {
+  if (sender !== currentUser) {
     await sb.from('voice_notes').update({is_played:true}).eq('id',id);
   }
 }
@@ -2774,7 +2776,7 @@ async function saveVoiceNote() {
   if (error) { showToast('Upload failed 😔'); return; }
   const { data: urlData } = sb.storage.from('media').getPublicUrl(filename);
   await sb.from('voice_notes').insert({
-    title, audio_url: urlData.publicUrl, duration: recordSeconds, is_played: false
+    title, audio_url: urlData.publicUrl, duration: recordSeconds, is_played: false, sender: currentUser
   });
   document.getElementById('recordingControls').style.display='none';
   document.getElementById('noteTitle').value='';
@@ -2782,6 +2784,8 @@ async function saveVoiceNote() {
   audioBlob = null; recordSeconds = 0;
   loadVoiceNotes();
   showToast('Voice note sent 💕');
+  const vnMsg = currentUser === 'admin' ? 'He recorded a voice note for you 🎤' : 'A recorded a voice note for you 🎤';
+  await sendPushNotification('Sweet Embrace 💛', vnMsg);
 }
 
 // ===== MEMORY WALL =====
@@ -2863,6 +2867,7 @@ async function openLetter(id) {
   document.getElementById('lfTitle').textContent = data.title || 'A Letter For You';
   document.getElementById('lfDate').textContent = new Date(data.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
   document.getElementById('lfBody').textContent = data.content || '';
+  document.getElementById('letterFullSig').textContent = data.sender === 'her' ? 'With all my love, A 💗' : 'With all my love, I 💛';
   document.getElementById('letterFullView').classList.remove('hidden');
 }
 
@@ -2876,12 +2881,16 @@ async function saveLetter() {
   const content = document.getElementById('letterBody').value.trim();
   const isSealed = document.getElementById('letterSealed').value === 'true';
   if (!content) { showToast('Write something first 💌'); return; }
-  await sb.from('letters').insert({ title, content, is_sealed: isSealed });
+  await sb.from('letters').insert({ title, content, is_sealed: isSealed, sender: currentUser });
   closeLetterModal();
   loadLetters();
   showToast('Letter saved 💕');
   document.getElementById('letterTitle').value='';
   document.getElementById('letterBody').value='';
+  if (!isSealed) {
+    const ltMsg = currentUser === 'admin' ? 'He wrote you a letter 💌' : 'A wrote you a letter 💌';
+    await sendPushNotification('Sweet Embrace 💛', ltMsg);
+  }
 }
 
 async function deleteLetter(id) {
